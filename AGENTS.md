@@ -20,7 +20,7 @@ Package manager is **pnpm** (lockfile: `pnpm-lock.yaml`). Node >=22.12.0.
 | Components | shadcn/ui (Radix Rhea style, `@/components/ui/*`) |
 | State | Zustand + persist middleware (localStorage) |
 | Validation | Zod — per-step schemas |
-| Icons | lucide-react |
+| Icons | react-icons |
 
 All stack packages installed and build-verified.
 

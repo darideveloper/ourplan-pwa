@@ -1,5 +1,7 @@
 import React from 'react'
-import { Label } from '@/components/ui/label'
+import { Label } from '@/components/atoms/Label'
+import { RadioGroup } from '@/components/atoms/RadioGroup'
+import { RadioGroupItem } from '@/components/atoms/RadioGroupItem'
 import { useField } from '@/store/useField'
 import type { FormValues } from '@/store/form'
 import { cn } from '@/lib/utils'
@@ -19,77 +21,64 @@ interface ValidatedRadioGroupProps {
 export const ValidatedRadioGroup: React.FC<ValidatedRadioGroupProps> = ({ field, label, options }) => {
   const { value, error, setValue, mounted } = useField(field);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setValue(e.target.value as FormValues[typeof field]);
+  const handleValueChange = (v: string) => {
+    setValue(v as FormValues[typeof field]);
   }
 
   const currentValue = mounted ? (value as string) : undefined;
+
+  const optionIds = React.useMemo(
+    () => options.map((o) => `${field}-${o.value}`),
+    [field, options]
+  )
 
   return (
     <div className="flex flex-col gap-2 p-2 w-full">
       <Label className={cn(error ? 'text-red-500' : '')}>
         {label}
       </Label>
-      <div className="grid grid-cols-1 gap-2 w-full">
-        {options.map((option) => {
-          const isSelected = currentValue === option.value;
+      <RadioGroup
+        value={currentValue ?? ''}
+        onValueChange={handleValueChange}
+        className="grid grid-cols-1 gap-2 w-full"
+      >
+        {options.map((option, i) => {
+          const id = optionIds[i]
           return (
-            <label
+            <div
               key={option.value}
               className={cn(
-                "group relative flex text-left cursor-pointer rounded-lg border p-3 transition-colors outline-none w-full",
-                isSelected
+                "flex items-start gap-3 rounded-lg border p-3 cursor-pointer transition-colors w-full",
+                currentValue === option.value
                   ? "border-[#fe676e] bg-[#fe676e]/5"
                   : error
                     ? "border-red-200 bg-white hover:border-red-300"
                     : "border-slate-200 bg-white hover:border-[#fe676e]/40"
               )}
             >
-              <input
-                type="radio"
-                name={field}
-                value={option.value}
-                checked={isSelected}
-                onChange={handleChange}
-                className="sr-only"
-              />
-              <div className="flex w-full items-center justify-between">
-                <div className="flex items-center">
-                  <div className="text-sm">
-                    <span
-                      className={cn(
-                        "font-medium cursor-pointer transition-colors block",
-                        isSelected ? "text-slate-900" : "text-slate-700 group-hover:text-slate-900"
-                      )}
-                    >
-                      {option.label}
-                    </span>
-                    {option.description && (
-                      <p className={cn(
-                        "mt-1 text-xs transition-colors",
-                        isSelected ? "text-[#fe676e]" : "text-slate-500"
-                      )}>
-                        {option.description}
-                      </p>
-                    )}
-                  </div>
-                </div>
-                <div className={cn(
-                  "flex h-4 w-4 shrink-0 items-center justify-center rounded-full border transition-colors ml-3",
-                  isSelected
-                    ? "border-[#fe676e] bg-[#fe676e]"
-                    : "border-slate-300 bg-white group-hover:border-[#fe676e]/60"
-                )}>
-                  <div className={cn(
-                    "h-1.5 w-1.5 rounded-full bg-white transition-all",
-                    isSelected ? "scale-100 opacity-100" : "scale-0 opacity-0"
-                  )} />
-                </div>
-              </div>
-            </label>
+              <RadioGroupItem value={option.value} id={id} className="mt-0.5" />
+              <Label htmlFor={id} className="flex-1 cursor-pointer text-sm">
+                <span
+                  className={cn(
+                    "font-medium block transition-colors",
+                    currentValue === option.value ? "text-slate-900" : "text-slate-700"
+                  )}
+                >
+                  {option.label}
+                </span>
+                {option.description && (
+                  <p className={cn(
+                    "mt-1 text-xs transition-colors",
+                    currentValue === option.value ? "text-[#fe676e]" : "text-slate-500"
+                  )}>
+                    {option.description}
+                  </p>
+                )}
+              </Label>
+            </div>
           )
         })}
-      </div>
+      </RadioGroup>
       {error && (
         <span className="text-xs text-red-500 font-medium italic">
           {error}

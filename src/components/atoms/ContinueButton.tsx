@@ -1,4 +1,5 @@
 import React from "react"
+import { Button } from "@/components/atoms/Button"
 import { useFormStore } from "@/store/form"
 import type { StepPath } from "@/store/form"
 
@@ -19,14 +20,14 @@ export const ContinueButton: React.FC<ContinueButtonProps> = ({ stepPath, label 
   }
 
   return (
-    <button
+    <Button
       onClick={handleClick}
-      className="w-full sm:w-auto inline-flex items-center justify-center rounded-md bg-slate-900 px-6 py-2.5 text-sm font-medium text-white shadow hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#fe676e] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+      className="w-full sm:w-auto bg-slate-900 hover:bg-slate-800 text-white focus-visible:ring-[#fe676e]"
     >
       {label}
       <svg className="ml-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
         <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
       </svg>
-    </button>
+    </Button>
   )
 }

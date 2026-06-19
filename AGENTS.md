@@ -68,6 +68,8 @@ Every interactive element follows this pattern:
 
 Why? Keeps React islands small and focused. Static content (headings, text, images) stays in Astro — not forced into React just because it's inside a form area.
 
+No file outside `src/components/atoms/*` may import from `src/components/ui/*`; every shadcn primitive is consumed only via its atom wrapper. The `atoms/` folder has two tiers: **presentation wrappers** (e.g. `Input`, `Button`) that re-export a shadcn primitive unchanged, and **stateful atoms** (e.g. `ValidatedInput`, `ContinueButton`) that wrap a presentation wrapper plus a `useField` / store binding. Stateful atoms import from presentation wrappers, never from `ui/*`.
+
 ## Conventions
 
 - **Branch workflow** — create a feature branch for every change; use OpenSpec (`opsx-new` → `opsx-apply` → `opsx-verify` → `opsx-sync-specs` → `opsx-archive`)

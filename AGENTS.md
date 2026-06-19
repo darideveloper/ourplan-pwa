@@ -70,7 +70,7 @@ Why? Keeps React islands small and focused. Static content (headings, text, imag
 
 ## Conventions
 
-- **Branch workflow** — create a feature branch for every change; use OpenSpec (`opsx-new` → `opsx-apply` → `opsx-verify` → `opsx-archive`)
+- **Branch workflow** — create a feature branch for every change; use OpenSpec (`opsx-new` → `opsx-apply` → `opsx-verify` → `opsx-sync-specs` → `opsx-archive`)
 - **UK English** (spelling, date format, etc.)
 - **shadcn defaults** for layout — brand colors can be tuned later (shadcn `mist` base)
 - **Disclaimer** — link to existing terms page + checkbox on summary; no inline legal text
@@ -93,5 +93,6 @@ Change-driven development via `openspec/` + `.opencode/skills/`. Commands (run i
 - `opsx-apply` — implement tasks from a change
 - `opsx-ff` — fast-forward through artifact creation
 - `opsx-verify` — validate implementation matches spec
+- `opsx-sync-specs` — sync delta specs to main specs (do this BEFORE archiving)
 - `opsx-archive` / `opsx-bulk-archive` — archive completed changes
 - `opsx-explore` — explore/investigate before starting

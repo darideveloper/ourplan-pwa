@@ -1,12 +1,12 @@
 import React from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { useFormStore } from "@/store/form";
-import type { FirstStepState } from "@/store/form";
+import { useField } from "@/store/useField";
+import type { FormValues } from "@/store/form";
 import { cn } from "@/lib/utils";
 
 interface ValidatedInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  field: keyof FirstStepState;
+  field: keyof FormValues;
   label: string;
 }
 
@@ -16,19 +16,13 @@ export const ValidatedInput: React.FC<ValidatedInputProps> = ({
   className,
   ...props
 }) => {
-  const [mounted, setMounted] = React.useState(false);
-  React.useEffect(() => setMounted(true), []);
-
-  const value = useFormStore((state) => state[field] as string);
-  const error = useFormStore((state) => state.errors[field]);
-  const setField = useFormStore((state) => state.setField);
+  const { value, error, setValue, mounted } = useField(field);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    // This triggers the Zod validation inside the store
-    setField(field, e.target.value);
+    setValue(e.target.value as FormValues[typeof field]);
   };
 
-  const displayValue = mounted ? value || "" : "";
+  const displayValue = mounted ? (value as string) || "" : "";
 
   return (
     <div className="flex flex-col gap-2 p-2">

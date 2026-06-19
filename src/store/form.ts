@@ -14,7 +14,11 @@ export const firstStepSchema = z.object({
 
 export type FirstStepState = z.infer<typeof firstStepSchema>
 
-interface FormState extends Partial<FirstStepState> {
+// FormValues is the intersection of all step schema inferred types.
+// Grows as steps are added: type FormValues = FirstStepState & SecondStepState & ...
+export type FormValues = FirstStepState
+
+interface FormState extends Partial<FormValues> {
   // We can add more step states here later
 }
 
@@ -45,6 +49,36 @@ export const stepSchemas: Record<string, z.ZodObject<any>> = {
   "/step1": firstStepSchema,
 }
 
+// --- Field → Schema Map ---
+// Built at module load by inverting stepSchemas: each field name maps to its owning step schema.
+// Asserts field-name uniqueness across step schemas — fails loud if a field appears in multiple steps.
+export function buildFieldSchemaMap(): Map<keyof FormValues, z.ZodTypeAny> {
+  const map = new Map<keyof FormValues, z.ZodTypeAny>()
+  for (const [stepPath, schema] of Object.entries(stepSchemas)) {
+    for (const field of Object.keys(schema.shape)) {
+      const existing = map.get(field as keyof FormValues)
+      if (existing) {
+        // Find the competing step path for the error message
+        let competingPath = ''
+        for (const [otherPath, otherSchema] of Object.entries(stepSchemas)) {
+          if (otherPath !== stepPath && field in otherSchema.shape) {
+            competingPath = otherPath
+            break
+          }
+        }
+        throw new Error(
+          `Field "${field}" appears in multiple step schemas: ${competingPath} and ${stepPath}. ` +
+          `Field names must be unique across steps. Prefix with the step name (e.g. stepX_${field}).`
+        )
+      }
+      map.set(field as keyof FormValues, schema.shape[field])
+    }
+  }
+  return map
+}
+
+export const fieldSchemaMap = buildFieldSchemaMap()
+
 // --- Zustand Store ---
 interface FormStore extends FormState {
   errors: Record<string, string>;
@@ -54,7 +88,7 @@ interface FormStore extends FormState {
   reset: () => void;
 }
 
-const initialState: FormState = {
+export const initialState: FormState = {
   user_name: "",
   parent_name: "",
   parent_health: undefined,
@@ -67,8 +101,8 @@ export const useFormStore = create<FormStore>()(
       errors: {},
       currentStep: "",
       setField: (field, value) => {
-        // Validate individual field against its schema shape
-        const schema = firstStepSchema.shape[field as keyof typeof firstStepSchema.shape];
+        // Look up the owning schema for this field from the registry map
+        const schema = fieldSchemaMap.get(field as keyof FormValues)
         if (schema) {
           const validation = schema.safeParse(value);
           if (!validation.success) {

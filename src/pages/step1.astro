@@ -1,7 +1,14 @@
 ---
 import StepLayout from '../layouts/StepLayout.astro';
 import { ValidatedInput } from '@/components/atoms/ValidatedInput';
-import { ParentHealthRadioGroup } from '@/components/molecules/ParentHealthRadioGroup';
+import { DynamicLabelRadioGroup } from '@/components/molecules/DynamicLabelRadioGroup';
+
+const healthOptions = [
+  { value: 'independent', label: 'Doing great, completely independent.' },
+  { value: 'slowing_down', label: 'Managing fine, but starting to slow down.' },
+  { value: 'frail', label: 'Facing noticeable physical or cognitive challenges.' },
+  { value: 'crisis', label: 'In a bit of a health crisis right now.' },
+];
 ---
 
 <StepLayout
@@ -28,6 +35,13 @@ import { ParentHealthRadioGroup } from '@/components/molecules/ParentHealthRadio
   </div>
 
   <div class="w-full">
-    <ParentHealthRadioGroup client:load />
+    <DynamicLabelRadioGroup
+      field="parent_health"
+      options={healthOptions}
+      labelTemplate="How would you describe {parent_name}'s current health?"
+      labelFields={["parent_name"]}
+      fallbackLabel="How would you describe their current health?"
+      client:load
+    />
   </div>
 </StepLayout>

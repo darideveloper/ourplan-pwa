@@ -1,7 +1,7 @@
 import React from 'react'
 import { Label } from '@/components/ui/label'
-import { useFormStore } from '@/store/form'
-import type { FirstStepState } from '@/store/form'
+import { useField } from '@/store/useField'
+import type { FormValues } from '@/store/form'
 import { cn } from '@/lib/utils'
 
 interface Option {
@@ -11,22 +11,19 @@ interface Option {
 }
 
 interface ValidatedRadioGroupProps {
-  field: keyof FirstStepState;
+  field: keyof FormValues;
   label: string;
   options: Option[];
 }
 
 export const ValidatedRadioGroup: React.FC<ValidatedRadioGroupProps> = ({ field, label, options }) => {
-  const [mounted, setMounted] = React.useState(false)
-  React.useEffect(() => setMounted(true), [])
-
-  const value = useFormStore((state) => state[field] as string)
-  const error = useFormStore((state) => state.errors[field])
-  const setField = useFormStore((state) => state.setField)
+  const { value, error, setValue, mounted } = useField(field);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setField(field, e.target.value as any)
+    setValue(e.target.value as FormValues[typeof field]);
   }
+
+  const currentValue = mounted ? (value as string) : undefined;
 
   return (
     <div className="flex flex-col gap-2 p-2 w-full">
@@ -35,20 +32,20 @@ export const ValidatedRadioGroup: React.FC<ValidatedRadioGroupProps> = ({ field,
       </Label>
       <div className="grid grid-cols-1 gap-2 w-full">
         {options.map((option) => {
-          const isSelected = mounted ? value === option.value : false;
+          const isSelected = currentValue === option.value;
           return (
             <label
-              key={option.value} 
+              key={option.value}
               className={cn(
                 "group relative flex text-left cursor-pointer rounded-lg border p-3 transition-colors outline-none w-full",
-                isSelected 
-                  ? "border-[#fe676e] bg-[#fe676e]/5" 
-                  : error 
+                isSelected
+                  ? "border-[#fe676e] bg-[#fe676e]/5"
+                  : error
                     ? "border-red-200 bg-white hover:border-red-300"
                     : "border-slate-200 bg-white hover:border-[#fe676e]/40"
               )}
             >
-              <input 
+              <input
                 type="radio"
                 name={field}
                 value={option.value}
@@ -59,7 +56,7 @@ export const ValidatedRadioGroup: React.FC<ValidatedRadioGroupProps> = ({ field,
               <div className="flex w-full items-center justify-between">
                 <div className="flex items-center">
                   <div className="text-sm">
-                    <span 
+                    <span
                       className={cn(
                         "font-medium cursor-pointer transition-colors block",
                         isSelected ? "text-slate-900" : "text-slate-700 group-hover:text-slate-900"
@@ -77,11 +74,10 @@ export const ValidatedRadioGroup: React.FC<ValidatedRadioGroupProps> = ({ field,
                     )}
                   </div>
                 </div>
-                {/* Custom radio circle */}
                 <div className={cn(
                   "flex h-4 w-4 shrink-0 items-center justify-center rounded-full border transition-colors ml-3",
-                  isSelected 
-                    ? "border-[#fe676e] bg-[#fe676e]" 
+                  isSelected
+                    ? "border-[#fe676e] bg-[#fe676e]"
                     : "border-slate-300 bg-white group-hover:border-[#fe676e]/60"
                 )}>
                   <div className={cn(

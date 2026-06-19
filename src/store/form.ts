@@ -101,8 +101,8 @@ export const useFormStore = create<FormStore>()(
         // Build data object from store for the completed step
         const data: Record<string, unknown> = {};
         const shape = schema.shape as Record<string, z.ZodTypeAny>;
+        const state = useFormStore.getState() as Record<string, unknown>;
         for (const key of Object.keys(shape)) {
-          const state = useFormStore.getState() as Record<string, unknown>;
           data[key] = state[key];
         }
 

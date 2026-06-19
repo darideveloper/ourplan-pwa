@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css'
+import { ProgressBar } from '../components/atoms/ProgressBar';
 ---
 
 <!doctype html>
@@ -13,6 +14,7 @@ import '../styles/global.css'
 		<title>Astro Basics</title>
 	</head>
 	<body>
+		<ProgressBar client:load />
 		<slot />
 	</body>
 </html>

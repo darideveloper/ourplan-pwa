@@ -1,0 +1,56 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { StepGuard } from '../hooks/useStepGuard';
+import { ContinueButton } from '@/components/atoms/ContinueButton';
+---
+
+<Layout>
+  <StepGuard client:load />
+  <div class="min-h-screen bg-slate-50 relative overflow-hidden flex flex-col justify-center">
+    <div class="absolute top-0 -left-4 w-72 h-72 bg-[#fe676e]/20 rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-blob"></div>
+    <div class="absolute top-0 -right-4 w-72 h-72 bg-orange-300/30 rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-blob animation-delay-2000"></div>
+    <div class="absolute -bottom-8 left-20 w-72 h-72 bg-[#fe676e]/30 rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-blob animation-delay-4000"></div>
+
+    <main class="relative z-10 py-8 px-4 sm:py-12 sm:px-6 lg:px-8 w-full">
+      <div class="max-w-xl mx-auto w-full">
+        <div class="mb-8 text-center space-y-3">
+          <h1 class="text-3xl sm:text-4xl font-bold tracking-tight text-slate-900 drop-shadow-sm">
+            Future Planning
+          </h1>
+          <p class="text-sm sm:text-base text-slate-600 max-w-md mx-auto">
+            Help us understand your wishes for the future.
+          </p>
+        </div>
+
+        <div class="bg-white/80 backdrop-blur-xl rounded-2xl border border-white/50 shadow-lg p-6 sm:p-8 transition-all duration-300 w-full">
+          <div class="space-y-6 w-full">
+            <p class="text-sm text-slate-500 text-center py-8">Step 3 content coming soon.</p>
+
+            <div class="pt-6 mt-6 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4">
+              <p class="text-sm text-slate-500">Your progress is saved automatically.</p>
+              <ContinueButton stepPath="/step3" client:load />
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</Layout>
+
+<style>
+  @keyframes blob {
+    0% { transform: translate(0px, 0px) scale(1); }
+    33% { transform: translate(30px, -50px) scale(1.1); }
+    66% { transform: translate(-20px, 20px) scale(0.9); }
+    100% { transform: translate(0px, 0px) scale(1); }
+  }
+  .animate-blob {
+    animation: blob 7s infinite;
+  }
+  .animation-delay-2000 {
+    animation-delay: 2s;
+  }
+  .animation-delay-4000 {
+    animation-delay: 4s;
+  }
+</style>

@@ -71,7 +71,7 @@ The `@keyframes blob` rule and the `.animate-blob`, `.animation-delay-2000`, `.a
 - **THEN** it SHALL contain exactly one `<style>` block defining `@keyframes blob`, `.animate-blob`, `.animation-delay-2000`, and `.animation-delay-4000`
 
 ### Requirement: StepLayout hosts StepGuard and ContinueButton
-The `StepLayout.astro` component SHALL render `<StepGuard client:load />` as the first child inside `<Layout>`'s body, before the outer step wrapper `<div>` (matching the placement used by `step2.astro`, `step3.astro`, `step4.astro`, and `summary.astro`). It SHALL render `<ContinueButton stepPath={stepPath} client:load />` inside the footer row. Step pages using `StepLayout` SHALL NOT import or render `StepGuard` or `ContinueButton` directly.
+The `StepLayout.astro` component SHALL render `<StepGuard client:load />` as the first child inside `<Layout>`'s body, before the outer step wrapper `<div>` (matching the placement used by `step2.astro`, `step3.astro`, `step4.astro`, and `summary.astro`). It SHALL render `<ContinueButton stepPath={stepPath} client:load />` inside the footer row. It SHALL also optionally accept a `backUrl` prop and render a Back link in the footer if provided. Step pages using `StepLayout` SHALL NOT import or render `StepGuard`, `ContinueButton`, or the Back button directly.
 
 #### Scenario: StepGuard is present once per step
 - **WHEN** any step page renders via `StepLayout`
@@ -89,11 +89,19 @@ The `StepLayout.astro` component SHALL render `<StepGuard client:load />` as the
 - **WHEN** `src/pages/step1.astro`, `step2.astro`, `step3.astro`, `step4.astro` are searched for the identifiers `StepGuard` and `ContinueButton`
 - **THEN** zero matches SHALL be found in any of those four files
 
-### Requirement: StepLayout footer is fixed
-The footer row rendered by `StepLayout` SHALL contain the literal text `"Your progress is saved automatically."` followed by the `ContinueButton`. The footer SHALL be separated from the slot content by a top border (`pt-6 mt-6 border-t border-slate-100`). The footer copy and structure SHALL NOT be overridable by the step page.
+#### Scenario: Back link renders when backUrl is provided
+- **WHEN** a step page renders via `<StepLayout stepPath="/step2" backUrl="/step1" …>`
+- **THEN** the shell SHALL render a "Back" link navigating to `/step1` in the footer
 
-#### Scenario: Footer text is present
-- **WHEN** any step page renders via `StepLayout`
+#### Scenario: Back link does not render when backUrl is omitted
+- **WHEN** a step page renders via `<StepLayout stepPath="/step1" …>` without a `backUrl` prop
+- **THEN** the shell SHALL NOT render a "Back" link
+
+### Requirement: StepLayout footer is fixed
+The footer row rendered by `StepLayout` SHALL contain either the literal text `"Your progress is saved automatically."` (if no `backUrl` is provided) or a "Back" button (if `backUrl` is provided), followed by the `ContinueButton`. The footer SHALL be separated from the slot content by a top border (`pt-6 mt-6 border-t border-slate-100`). The footer copy and structure SHALL NOT be overridable by the step page.
+
+#### Scenario: Footer text is present when no backUrl
+- **WHEN** any step page renders via `StepLayout` without a `backUrl`
 - **THEN** the rendered DOM SHALL contain a `<p>` with the exact text `"Your progress is saved automatically."`
 
 #### Scenario: Footer sits below the slot content with a divider

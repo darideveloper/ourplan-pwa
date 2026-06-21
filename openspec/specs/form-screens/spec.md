@@ -550,3 +550,12 @@ DisclaimerCheckbox          molecule (NEW) Summary   disclaimer_agreed
 EmailShareSection           molecule (NEW) Summary   email_recipients, custom_message
 SubmitButton                molecule (NEW) Summary   Generate My Plan
 ```
+
+## Requirements
+
+### Requirement: Back Navigation in Component Inventory
+The component inventory SHALL include a back navigation atom to allow returning to the previous step.
+
+#### Scenario: Back navigation component is listed
+- **WHEN** checking the components for form steps
+- **THEN** a Back navigation link component is available for steps 2 and beyond

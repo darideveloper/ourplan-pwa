@@ -14,9 +14,26 @@ export const firstStepSchema = z.object({
 
 export type FirstStepState = z.infer<typeof firstStepSchema>
 
+export const secondStepSchema = z.object({
+  lpa_status: z.enum(["both", "one", "started", "none"], {
+    required_error: "Please select an LPA status",
+    invalid_type_error: "Please select a valid LPA status",
+  }),
+  psr_status: z.enum(["yes", "no"], {
+    required_error: "Please select a PSR status",
+    invalid_type_error: "Please select a valid PSR status",
+  }),
+  documents_loc: z.enum(["yes", "partial", "no"], {
+    required_error: "Please select a documents location",
+    invalid_type_error: "Please select a valid documents location",
+  }),
+})
+
+export type SecondStepState = z.infer<typeof secondStepSchema>
+
 // FormValues is the intersection of all step schema inferred types.
 // Grows as steps are added: type FormValues = FirstStepState & SecondStepState & ...
-export type FormValues = FirstStepState
+export type FormValues = FirstStepState & SecondStepState
 
 interface FormState extends Partial<FormValues> {
   // We can add more step states here later
@@ -47,6 +64,7 @@ export function getEarliestIncomplete(completed: string): string {
 // --- Step Schema Registry ---
 export const stepSchemas: Record<string, z.ZodObject<any>> = {
   "/step1": firstStepSchema,
+  "/step2": secondStepSchema,
 }
 
 // --- Field → Schema Map ---
@@ -92,6 +110,9 @@ export const initialState: FormState = {
   user_name: "",
   parent_name: "",
   parent_health: undefined,
+  lpa_status: undefined,
+  psr_status: undefined,
+  documents_loc: undefined,
 }
 
 export const useFormStore = create<FormStore>()(

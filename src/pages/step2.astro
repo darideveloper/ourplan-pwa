@@ -1,5 +1,6 @@
 ---
 import StepLayout from '../layouts/StepLayout.astro';
+import { ValidatedRadioGroup } from '../components/atoms/ValidatedRadioGroup';
 ---
 
 <StepLayout
@@ -8,5 +9,38 @@ import StepLayout from '../layouts/StepLayout.astro';
   stepPath="/step2"
   backUrl="/step1"
 >
-  <p class="text-sm text-slate-500 text-center py-8">Step 2 content coming soon.</p>
+  <div class="space-y-6">
+    <ValidatedRadioGroup
+      client:load
+      field="lpa_status"
+      label="Do you have Lasting Power of Attorney (LPA) registered for [Parent Name]?"
+      options={[
+        { value: 'both', label: 'Yes, both Health & Welfare and Financial.' },
+        { value: 'one', label: 'Just one of them (either Health or Financial).' },
+        { value: 'started', label: 'We’ve talked about it, but nothing is legally active yet.' },
+        { value: 'none', label: 'No, and I don\'t know how to bring it up.' },
+      ]}
+    />
+
+    <ValidatedRadioGroup
+      client:load
+      field="psr_status"
+      label="Is [Parent Name] registered on the utility Priority Services Register (PSR)?"
+      options={[
+        { value: 'yes', label: 'Yes, all sorted.' },
+        { value: 'no', label: 'No, or I haven\'t heard of this yet.' },
+      ]}
+    />
+
+    <ValidatedRadioGroup
+      client:load
+      field="documents_loc"
+      label="If there was an emergency tomorrow, do you know exactly where [Parent Name] keeps their vital documents (Will, NHS number, insurance)?"
+      options={[
+        { value: 'yes', label: 'Yes, I know exactly where the folder/drawer is.' },
+        { value: 'partial', label: 'I have a rough idea, but it would take some hunting.' },
+        { value: 'no', label: 'No clue—it\'s a complete mystery.' },
+      ]}
+    />
+  </div>
 </StepLayout>

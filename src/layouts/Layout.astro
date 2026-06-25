@@ -1,6 +1,8 @@
 ---
 import '../styles/global.css'
 import { ProgressBar } from '../components/atoms/ProgressBar';
+
+const pathname = Astro.url.pathname;
 ---
 
 <!doctype html>
@@ -14,7 +16,7 @@ import { ProgressBar } from '../components/atoms/ProgressBar';
 		<title>Astro Basics</title>
 	</head>
 	<body>
-		<ProgressBar client:load />
+		<ProgressBar currentPath={pathname} client:load />
 		<slot />
 	</body>
 </html>

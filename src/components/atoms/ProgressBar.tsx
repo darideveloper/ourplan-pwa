@@ -4,17 +4,17 @@ import { cn } from "@/lib/utils"
 
 const STEP_LABELS = ["Step 1", "Step 2", "Step 3", "Step 4"]
 
-export const ProgressBar = () => {
+export const ProgressBar = ({ currentPath }: { currentPath?: string }) => {
   const currentStep = useFormStore((state) => state.currentStep)
   const [mounted, setMounted] = React.useState(false)
   React.useEffect(() => setMounted(true), [])
 
-  const currentPath = mounted ? window.location.pathname : ""
-  const completedIdx = getStepIndex(currentStep)
-  const activeIdx = getStepIndex(currentPath)
+  const activePath = mounted ? window.location.pathname : (currentPath || "")
+  const completedIdx = mounted ? getStepIndex(currentStep) : -1
+  const activeIdx = getStepIndex(activePath)
 
-  // Hide on welcome page or during SSR
-  if (!currentPath || currentPath === "/") return null
+  // Hide on welcome page
+  if (activePath === "/") return null
 
   const steps = STEP_ORDER.filter((s) => s !== "/summary")
 

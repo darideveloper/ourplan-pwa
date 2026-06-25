@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css'
 import { ProgressBar } from '../components/atoms/ProgressBar';
+import { GlobalLoader } from '../components/molecules/GlobalLoader';
 
 const pathname = Astro.url.pathname;
 ---
@@ -16,6 +17,7 @@ const pathname = Astro.url.pathname;
 		<title>Astro Basics</title>
 	</head>
 	<body>
+		<GlobalLoader client:load />
 		<ProgressBar currentPath={pathname} client:load />
 		<slot />
 	</body>

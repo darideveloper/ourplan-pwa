@@ -101,6 +101,8 @@ export const fieldSchemaMap = buildFieldSchemaMap()
 interface FormStore extends FormState {
   errors: Record<string, string>;
   currentStep: StepPath;
+  isNavigating: boolean;
+  setIsNavigating: (isNavigating: boolean) => void;
   setField: <K extends keyof FormState>(field: K, value: FormState[K]) => void;
   advanceStep: (completedPath: StepPath) => string | null;
   reset: () => void;
@@ -121,6 +123,8 @@ export const useFormStore = create<FormStore>()(
       ...initialState,
       errors: {},
       currentStep: "",
+      isNavigating: false,
+      setIsNavigating: (isNavigating) => set({ isNavigating }),
       setField: (field, value) => {
         // Look up the owning schema for this field from the registry map
         const schema = fieldSchemaMap.get(field as keyof FormValues)
@@ -188,6 +192,10 @@ export const useFormStore = create<FormStore>()(
     }),
     {
       name: 'ourplan-form-storage',
+      partialize: (state) => {
+        const { isNavigating, ...rest } = state;
+        return rest;
+      },
     }
   )
 )

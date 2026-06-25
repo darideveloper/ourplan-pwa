@@ -13,11 +13,13 @@ export const ContinueButton: React.FC<ContinueButtonProps> = ({
   label = "Continue",
 }) => {
   const advanceStep = useFormStore((state) => state.advanceStep);
+  const setIsNavigating = useFormStore((state) => state.setIsNavigating);
 
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
     const nextUrl = advanceStep(stepPath);
     if (nextUrl) {
+      setIsNavigating(true);
       window.location.href = nextUrl;
     }
   };

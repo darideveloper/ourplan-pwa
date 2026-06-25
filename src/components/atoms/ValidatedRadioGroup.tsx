@@ -52,8 +52,9 @@ export const ValidatedRadioGroup: React.FC<ValidatedRadioGroupProps> = ({ field,
         {options.map((option, i) => {
           const id = optionIds[i]
           return (
-            <div
+            <label
               key={option.value}
+              htmlFor={id}
               className={cn(
                 "flex items-start gap-3 rounded-lg border p-3 cursor-pointer transition-colors w-full",
                 currentValue === option.value
@@ -64,7 +65,7 @@ export const ValidatedRadioGroup: React.FC<ValidatedRadioGroupProps> = ({ field,
               )}
             >
               <RadioGroupItem value={option.value} id={id} className="mt-0.5" />
-              <Label htmlFor={id} className="flex-1 cursor-pointer text-sm">
+              <div className="flex-1 cursor-pointer text-sm">
                 <span
                   className={cn(
                     "font-medium block transition-colors",
@@ -81,8 +82,8 @@ export const ValidatedRadioGroup: React.FC<ValidatedRadioGroupProps> = ({ field,
                     {option.description}
                   </p>
                 )}
-              </Label>
-            </div>
+              </div>
+            </label>
           )
         })}
       </RadioGroup>

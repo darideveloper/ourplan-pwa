@@ -1,12 +1,15 @@
 ---
 import StepLayout from '../layouts/StepLayout.astro';
+import { Step3Form } from '@/components/organisms/Step3Form';
 ---
 
 <StepLayout
-  title="Future Planning"
+  title="Environment, Digital & Lifestyle"
   subtitle="Help us understand your wishes for the future."
   stepPath="/step3"
   backUrl="/step2"
 >
-  <p class="text-sm text-slate-500 text-center py-8">Step 3 content coming soon.</p>
+  <div class="w-full">
+    <Step3Form client:load />
+  </div>
 </StepLayout>

@@ -31,9 +31,32 @@ export const secondStepSchema = z.object({
 
 export type SecondStepState = z.infer<typeof secondStepSchema>
 
+export const thirdStepSchema = z.object({
+  home_type: z.enum(["single_level", "multi_unadapted", "multi_adapted"], {
+    required_error: "Please select a home type",
+    invalid_type_error: "Please select a valid home type",
+  }),
+  ourlens_completed: z.enum(["yes", "no_but_wants", "no_dont_know"], {
+    required_error: "Please indicate if an OurLens scan was completed",
+    invalid_type_error: "Please select a valid option",
+  }),
+  hazard_flags: z.array(z.string()).min(1, "Please select at least one option"),
+  digital_literacy: z.enum(["pro", "casual", "skeptic", "resistant"], {
+    required_error: "Please select a digital literacy level",
+    invalid_type_error: "Please select a valid option",
+  }),
+  has_pets: z.enum(["yes", "no"], {
+    required_error: "Please select if there are any pets",
+    invalid_type_error: "Please select a valid option",
+  }),
+  hobbies_social: z.string().min(1, "Please enter hobbies or social activities"),
+})
+
+export type ThirdStepState = z.infer<typeof thirdStepSchema>
+
 // FormValues is the intersection of all step schema inferred types.
 // Grows as steps are added: type FormValues = FirstStepState & SecondStepState & ...
-export type FormValues = FirstStepState & SecondStepState
+export type FormValues = FirstStepState & SecondStepState & ThirdStepState
 
 interface FormState extends Partial<FormValues> {
   // We can add more step states here later
@@ -65,6 +88,7 @@ export function getEarliestIncomplete(completed: string): string {
 export const stepSchemas: Record<string, z.ZodObject<any>> = {
   "/step1": firstStepSchema,
   "/step2": secondStepSchema,
+  "/step3": thirdStepSchema,
 }
 
 // --- Field → Schema Map ---
@@ -115,6 +139,12 @@ export const initialState: FormState = {
   lpa_status: undefined,
   psr_status: undefined,
   documents_loc: undefined,
+  home_type: undefined,
+  ourlens_completed: undefined,
+  hazard_flags: [],
+  digital_literacy: undefined,
+  has_pets: undefined,
+  hobbies_social: "",
 }
 
 export const useFormStore = create<FormStore>()(

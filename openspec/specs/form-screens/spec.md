@@ -524,7 +524,7 @@ Screen  Route       Status        Fields  Components
 ──────  ─────       ──────        ──────  ──────────
 Step 1  /step1      DONE          3/3     ValidatedInput(x2), ParentHealthRadioGroup
 Step 2  /step2      PLACEHOLDER   0/3     —
-Step 3  /step3      PLACEHOLDER   0/5     — (needs conditional logic for field 8b)
+Step 3  /step3      DONE          5/5     ValidatedRadioGroup, ValidatedCheckboxGroup, TextInput
 Step 4  /step4      PLACEHOLDER   0/5     — (needs dynamic repeater)
 Summary /summary    PLACEHOLDER   0/3     — (needs disclaimer gate)
 ```
@@ -559,3 +559,10 @@ The component inventory SHALL include a back navigation atom to allow returning 
 #### Scenario: Back navigation component is listed
 - **WHEN** checking the components for form steps
 - **THEN** a Back navigation link component is available for steps 2 and beyond
+
+### Requirement: Implementation Status
+The implementation status of form screens MUST be tracked.
+
+#### Scenario: Step 3 is implemented
+- **WHEN** the Step 3 functionality is complete
+- **THEN** the implementation status table MUST list Step 3 as DONE and list its fields and components as complete.

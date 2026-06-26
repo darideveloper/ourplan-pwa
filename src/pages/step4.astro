@@ -1,12 +1,15 @@
 ---
-import StepLayout from '../layouts/StepLayout.astro';
+import StepLayout from "../layouts/StepLayout.astro";
+import { Step4Form } from "@/components/organisms/Step4Form";
 ---
 
 <StepLayout
-  title="Final Details"
-  subtitle="One last step before we create your plan."
-  stepPath="/step4"
-  backUrl="/step3"
+    title="The Support Circle"
+    subtitle="One last step before we create your plan."
+    stepPath="/step4"
+    backUrl="/step3"
 >
-  <p class="text-sm text-slate-500 text-center py-8">Step 4 content coming soon.</p>
+    <div class="w-full">
+        <Step4Form client:load />
+    </div>
 </StepLayout>

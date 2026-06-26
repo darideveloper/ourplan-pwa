@@ -308,7 +308,7 @@ STATE PERSISTENCE:
 
 **Route:** `/step4`  
 **Page:** `src/pages/step4.astro`  
-**Status:** PLACEHOLDER (no fields implemented)  
+**Status:** IMPLEMENTED  
 **Schema:** NOT YET DEFINED (needs `fourthStepSchema` — dynamic array)  
 **Title:** "Final Details" *(title may need updating from PSD)*  
 **Subtitle:** "One last step before we create your plan." *(subtitle may need updating)*
@@ -525,7 +525,7 @@ Screen  Route       Status        Fields  Components
 Step 1  /step1      DONE          3/3     ValidatedInput(x2), ParentHealthRadioGroup
 Step 2  /step2      PLACEHOLDER   0/3     —
 Step 3  /step3      DONE          5/5     ValidatedRadioGroup, ValidatedCheckboxGroup, TextInput
-Step 4  /step4      PLACEHOLDER   0/5     — (needs dynamic repeater)
+Step 4  /step4      DONE          5/5     ValidatedSelect, SupportCircleRepeater, TextInput
 Summary /summary    PLACEHOLDER   0/3     — (needs disclaimer gate)
 ```
 
@@ -566,3 +566,7 @@ The implementation status of form screens MUST be tracked.
 #### Scenario: Step 3 is implemented
 - **WHEN** the Step 3 functionality is complete
 - **THEN** the implementation status table MUST list Step 3 as DONE and list its fields and components as complete.
+
+#### Scenario: Step 4 is implemented
+- **WHEN** the Step 4 functionality is complete
+- **THEN** the implementation status table MUST list Step 4 as DONE and list its fields and components as complete.

@@ -54,9 +54,37 @@ export const thirdStepSchema = z.object({
 
 export type ThirdStepState = z.infer<typeof thirdStepSchema>
 
+export const personSchema = z.object({
+  helper_name: z.string().min(1, "Name is required"),
+  helper_relationship: z.enum(["sibling", "partner", "grandchild", "extended_family", "friend_neighbor"], {
+    required_error: "Relationship is required",
+    invalid_type_error: "Invalid relationship",
+  }),
+  helper_proximity: z.enum(["near", "mid_distance", "abroad"], {
+    required_error: "Proximity is required",
+    invalid_type_error: "Invalid proximity",
+  }),
+  helper_time: z.enum(["high", "moderate", "very_limited"], {
+    required_error: "Availability is required",
+    invalid_type_error: "Invalid availability",
+  }),
+  helper_superpower: z.enum(["admin", "fixer", "coordinator", "companion"], {
+    required_error: "Superpower is required",
+    invalid_type_error: "Invalid superpower",
+  }),
+})
+
+export type PersonSchema = z.infer<typeof personSchema>
+
+export const fourthStepSchema = z.object({
+  support_circle: z.array(personSchema),
+})
+
+export type FourthStepState = z.infer<typeof fourthStepSchema>
+
 // FormValues is the intersection of all step schema inferred types.
 // Grows as steps are added: type FormValues = FirstStepState & SecondStepState & ...
-export type FormValues = FirstStepState & SecondStepState & ThirdStepState
+export type FormValues = FirstStepState & SecondStepState & ThirdStepState & FourthStepState
 
 interface FormState extends Partial<FormValues> {
   // We can add more step states here later
@@ -89,6 +117,7 @@ export const stepSchemas: Record<string, z.ZodObject<any>> = {
   "/step1": firstStepSchema,
   "/step2": secondStepSchema,
   "/step3": thirdStepSchema,
+  "/step4": fourthStepSchema,
 }
 
 // --- Field → Schema Map ---
@@ -145,6 +174,7 @@ export const initialState: FormState = {
   digital_literacy: undefined,
   has_pets: undefined,
   hobbies_social: "",
+  support_circle: [],
 }
 
 export const useFormStore = create<FormStore>()(

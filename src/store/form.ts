@@ -82,9 +82,19 @@ export const fourthStepSchema = z.object({
 
 export type FourthStepState = z.infer<typeof fourthStepSchema>
 
+export const summarySchema = z.object({
+  disclaimer_agreed: z.boolean().refine(val => val === true, {
+    message: "You must agree to the Terms & Disclaimer to generate your plan",
+  }),
+  email_recipients: z.string().optional(),
+  custom_message: z.string().optional(),
+})
+
+export type SummaryStepState = z.infer<typeof summarySchema>
+
 // FormValues is the intersection of all step schema inferred types.
 // Grows as steps are added: type FormValues = FirstStepState & SecondStepState & ...
-export type FormValues = FirstStepState & SecondStepState & ThirdStepState & FourthStepState
+export type FormValues = FirstStepState & SecondStepState & ThirdStepState & FourthStepState & SummaryStepState
 
 interface FormState extends Partial<FormValues> {
   // We can add more step states here later
@@ -118,6 +128,7 @@ export const stepSchemas: Record<string, z.ZodObject<any>> = {
   "/step2": secondStepSchema,
   "/step3": thirdStepSchema,
   "/step4": fourthStepSchema,
+  "/summary": summarySchema,
 }
 
 // --- Field → Schema Map ---
@@ -175,6 +186,9 @@ export const initialState: FormState = {
   has_pets: undefined,
   hobbies_social: "",
   support_circle: [],
+  disclaimer_agreed: false,
+  email_recipients: "",
+  custom_message: "",
 }
 
 export const useFormStore = create<FormStore>()(

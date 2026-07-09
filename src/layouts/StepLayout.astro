@@ -9,9 +9,10 @@ interface Props {
   subtitle?: string;
   stepPath: StepPath;
   backUrl?: string;
+  hideContinue?: boolean;
 }
 
-const { title, subtitle, stepPath, backUrl } = Astro.props;
+const { title, subtitle, stepPath, backUrl, hideContinue } = Astro.props;
 const hasHeader = title || subtitle;
 ---
 
@@ -55,7 +56,7 @@ const hasHeader = title || subtitle;
               ) : (
                 <p class="text-sm text-slate-500">Your progress is saved automatically.</p>
               )}
-              <ContinueButton stepPath={stepPath} client:load />
+              {!hideContinue && <ContinueButton stepPath={stepPath} client:load />}
             </div>
           </div>
         </div>

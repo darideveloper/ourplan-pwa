@@ -44,18 +44,22 @@ const hasPetsOptions = [
 
 export const Step3Form: React.FC = () => {
   const ourlensCompleted = useFormStore(state => state.ourlens_completed)
+  const parentName = useFormStore(state => state.parent_name)
+  
+  const nameOrLovedOne = parentName || "your loved one"
+  const namePossessive = parentName ? `${parentName}'s` : "their"
 
   return (
     <div className="flex flex-col gap-6 w-full max-w-lg mx-auto">
       <ValidatedRadioGroup
         field="home_type"
-        label="What type of home does [Name] live in?"
+        label={`What type of home does ${nameOrLovedOne} live in?`}
         options={homeTypeOptions}
       />
 
       <ValidatedRadioGroup
         field="ourlens_completed"
-        label="Have you completed an OurLens Home Safety Scan for [Name]'s home yet?"
+        label={`Have you completed an OurLens Home Safety Scan for ${namePossessive} home yet?`}
         options={ourlensCompletedOptions}
       />
 
@@ -77,19 +81,19 @@ export const Step3Form: React.FC = () => {
 
       <ValidatedRadioGroup
         field="digital_literacy"
-        label="How confident is [Name] with digital technology?"
+        label={`How confident is ${nameOrLovedOne} with digital technology?`}
         options={digitalLiteracyOptions}
       />
 
       <ValidatedRadioGroup
         field="has_pets"
-        label="Does [Name] have any pets that they adore?"
+        label={`Does ${nameOrLovedOne} have any pets that they adore?`}
         options={hasPetsOptions}
       />
 
       <ValidatedInput
         field="hobbies_social"
-        label="What are [Name]'s favourite hobbies or main sources of social interaction right now?"
+        label={`What are ${namePossessive} favourite hobbies or main sources of social interaction right now?`}
         placeholder="e.g., gardening, church, lunch club"
       />
     </div>

@@ -1,6 +1,6 @@
 ---
 import StepLayout from '../layouts/StepLayout.astro';
-import { ValidatedRadioGroup } from '../components/atoms/ValidatedRadioGroup';
+import { DynamicLabelRadioGroup } from '../components/molecules/DynamicLabelRadioGroup';
 ---
 
 <StepLayout
@@ -10,10 +10,12 @@ import { ValidatedRadioGroup } from '../components/atoms/ValidatedRadioGroup';
   backUrl="/step1"
 >
   <div class="space-y-6">
-    <ValidatedRadioGroup
+    <DynamicLabelRadioGroup
       client:load
       field="lpa_status"
-      label="Do you have Lasting Power of Attorney (LPA) registered for [Parent Name]?"
+      labelTemplate="Do you have Lasting Power of Attorney (LPA) registered for {parent_name}?"
+      labelFields={["parent_name"]}
+      fallbackLabel="Do you have Lasting Power of Attorney (LPA) registered for your loved one?"
       options={[
         { value: 'both', label: 'Yes, both Health & Welfare and Financial.' },
         { value: 'one', label: 'Just one of them (either Health or Financial).' },
@@ -22,20 +24,24 @@ import { ValidatedRadioGroup } from '../components/atoms/ValidatedRadioGroup';
       ]}
     />
 
-    <ValidatedRadioGroup
+    <DynamicLabelRadioGroup
       client:load
       field="psr_status"
-      label="Is [Parent Name] registered on the utility Priority Services Register (PSR)?"
+      labelTemplate="Is {parent_name} registered on the utility Priority Services Register (PSR)?"
+      labelFields={["parent_name"]}
+      fallbackLabel="Is your loved one registered on the utility Priority Services Register (PSR)?"
       options={[
         { value: 'yes', label: 'Yes, all sorted.' },
         { value: 'no', label: 'No, or I haven\'t heard of this yet.' },
       ]}
     />
 
-    <ValidatedRadioGroup
+    <DynamicLabelRadioGroup
       client:load
       field="documents_loc"
-      label="If there was an emergency tomorrow, do you know exactly where [Parent Name] keeps their vital documents (Will, NHS number, insurance)?"
+      labelTemplate="If there was an emergency tomorrow, do you know exactly where {parent_name} keeps their vital documents (Will, NHS number, insurance)?"
+      labelFields={["parent_name"]}
+      fallbackLabel="If there was an emergency tomorrow, do you know exactly where they keep their vital documents (Will, NHS number, insurance)?"
       options={[
         { value: 'yes', label: 'Yes, I know exactly where the folder/drawer is.' },
         { value: 'partial', label: 'I have a rough idea, but it would take some hunting.' },

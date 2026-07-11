@@ -1,10 +1,10 @@
-import React from "react"
+import * as React from "react"
 import { useFormStore, getStepIndex, STEP_ORDER } from "@/store/form"
 import { cn } from "@/lib/utils"
 
 const STEP_LABELS = ["Step 1", "Step 2", "Step 3", "Step 4"]
 
-export const ProgressBar = ({ currentPath }: { currentPath?: string }) => {
+export function ProgressBar({ currentPath }: { currentPath?: string }) {
   const currentStep = useFormStore((state) => state.currentStep)
   const [mounted, setMounted] = React.useState(false)
   React.useEffect(() => setMounted(true), [])

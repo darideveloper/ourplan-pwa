@@ -1,38 +1,38 @@
-import React from 'react'
-import { Label } from '@/components/atoms/Label'
-import { RadioGroup } from '@/components/atoms/RadioGroup'
-import { RadioGroupItem } from '@/components/atoms/RadioGroupItem'
-import { useField } from '@/store/useField'
-import { useFormStore } from '@/store/form'
-import type { FormValues } from '@/store/form'
-import { cn } from '@/lib/utils'
+import * as React from "react"
+import { Label } from "@/components/atoms/Label"
+import { RadioGroup } from "@/components/atoms/RadioGroup"
+import { RadioGroupItem } from "@/components/atoms/RadioGroupItem"
+import { useField } from "@/store/useField"
+import { useFormStore } from "@/store/form"
+import type { FormValues } from "@/store/form"
+import { cn } from "@/lib/utils"
 
 interface Option {
-  value: string;
-  label: string;
-  description?: string;
+  value: string
+  label: string
+  description?: string
 }
 
 interface ValidatedRadioGroupProps {
-  field: keyof FormValues;
-  label: string;
-  options: Option[];
+  field: keyof FormValues
+  label: string
+  options: Option[]
 }
 
-export const ValidatedRadioGroup: React.FC<ValidatedRadioGroupProps> = ({ field, label, options }) => {
-  const { value, error, setValue, mounted } = useField(field);
-  const parentName = useFormStore(state => state.parent_name);
+export function ValidatedRadioGroup({ field, label, options }: ValidatedRadioGroupProps) {
+  const { value, error, setValue, mounted } = useField(field)
+  const parentName = useFormStore(state => state.parent_name)
 
   const handleValueChange = (v: string) => {
-    setValue(v as FormValues[typeof field]);
+    setValue(v as FormValues[typeof field])
   }
 
-  const currentValue = mounted ? (value as string) : undefined;
-  
+  const currentValue = mounted ? (value as string) : undefined
+
   const displayLabel = React.useMemo(() => {
-    const nameToUse = mounted && parentName ? parentName : "your loved one";
-    return label.replace(/\[Name\]|\[Parent Name\]/gi, nameToUse);
-  }, [label, mounted, parentName]);
+    const nameToUse = mounted && parentName ? parentName : "your loved one"
+    return label.replace(/\[Name\]|\[Parent Name\]/gi, nameToUse)
+  }, [label, mounted, parentName])
 
   const optionIds = React.useMemo(
     () => options.map((o) => `${field}-${o.value}`),
@@ -41,11 +41,11 @@ export const ValidatedRadioGroup: React.FC<ValidatedRadioGroupProps> = ({ field,
 
   return (
     <div className="flex flex-col gap-2 p-2 w-full">
-      <Label className={cn(error ? 'text-red-500' : '')}>
+      <Label className={cn(error ? "text-red-500" : "")}>
         {displayLabel}
       </Label>
       <RadioGroup
-        value={currentValue ?? ''}
+        value={currentValue ?? ""}
         onValueChange={handleValueChange}
         className="grid grid-cols-1 gap-2 w-full"
       >

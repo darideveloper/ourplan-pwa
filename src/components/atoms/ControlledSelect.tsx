@@ -1,39 +1,32 @@
-import React, { useId } from "react";
-import { Label } from "@/components/atoms/Label";
+import * as React from "react"
+import { useId } from "react"
+import { Label } from "@/components/atoms/Label"
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { cn } from "@/lib/utils";
+} from "@/components/ui/select"
+import { cn } from "@/lib/utils"
 
 interface Option {
-  label: string;
-  value: string;
+  label: string
+  value: string
 }
 
 interface ControlledSelectProps {
-  label: string;
-  value: string;
-  onValueChange: (value: string) => void;
-  options: Option[];
-  placeholder?: string;
-  error?: string;
-  className?: string;
+  label: string
+  value: string
+  onValueChange: (value: string) => void
+  options: Option[]
+  placeholder?: string
+  error?: string
+  className?: string
 }
 
-export const ControlledSelect: React.FC<ControlledSelectProps> = ({
-  label,
-  value,
-  onValueChange,
-  options,
-  placeholder = "Select an option",
-  error,
-  className,
-}) => {
-  const id = useId();
+export function ControlledSelect({ label, value, onValueChange, options, placeholder = "Select an option", error, className }: ControlledSelectProps) {
+  const id = useId()
 
   return (
     <div className={cn("flex flex-col gap-2 p-2", className)}>
@@ -67,5 +60,5 @@ export const ControlledSelect: React.FC<ControlledSelectProps> = ({
         <span className="text-xs text-red-500 font-medium italic">{error}</span>
       )}
     </div>
-  );
-};
+  )
+}

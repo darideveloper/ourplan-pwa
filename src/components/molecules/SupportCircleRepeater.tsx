@@ -1,9 +1,9 @@
-import React from "react";
-import { useField } from "@/store/useField";
-import { ControlledInput } from "@/components/atoms/ControlledInput";
-import { ControlledSelect } from "@/components/atoms/ControlledSelect";
-import { Button } from "@/components/ui/button";
-import type { PersonSchema } from "@/store/form";
+import * as React from "react"
+import { useField } from "@/store/useField"
+import { ControlledInput } from "@/components/atoms/ControlledInput"
+import { ControlledSelect } from "@/components/atoms/ControlledSelect"
+import { Button } from "@/components/atoms/Button"
+import type { PersonSchema, FormValues } from "@/store/form"
 
 const relationshipOptions = [
   { label: "Sibling", value: "sibling" },
@@ -11,68 +11,68 @@ const relationshipOptions = [
   { label: "Grandchild", value: "grandchild" },
   { label: "Extended family", value: "extended_family" },
   { label: "Friend / Neighbour", value: "friend_neighbor" },
-];
+]
 
 const proximityOptions = [
   { label: "Near (under 30 mins away)", value: "near" },
   { label: "Mid-distance (1+ hours away, in UK)", value: "mid_distance" },
   { label: "Abroad (internationally located / different time zone)", value: "abroad" },
-];
+]
 
 const timeOptions = [
   { label: "High availability", value: "high" },
   { label: "Moderate availability", value: "moderate" },
   { label: "Very limited availability", value: "very_limited" },
-];
+]
 
 const superpowerOptions = [
   { label: "The Admin/Numbers Wizard", value: "admin" },
   { label: "The Fixer", value: "fixer" },
   { label: "The Coordinator", value: "coordinator" },
   { label: "The Companion", value: "companion" },
-];
+]
 
-export const SupportCircleRepeater: React.FC = () => {
-  const { value, error, setValue, mounted } = useField("support_circle");
+export function SupportCircleRepeater() {
+  const { value, error, setValue, mounted } = useField("support_circle")
 
   // Avoid hydration mismatch
-  if (!mounted) return null;
+  if (!mounted) return null
 
-  const people = (value as PersonSchema[]) || [];
+  const people = (value as PersonSchema[]) || []
 
   const handleAddPerson = () => {
     const newPerson: PersonSchema = {
       helper_name: "",
-      helper_relationship: undefined as any,
-      helper_proximity: undefined as any,
-      helper_time: undefined as any,
-      helper_superpower: undefined as any,
-    };
-    setValue([...people, newPerson] as any);
-  };
+      helper_relationship: "" as PersonSchema["helper_relationship"],
+      helper_proximity: "" as PersonSchema["helper_proximity"],
+      helper_time: "" as PersonSchema["helper_time"],
+      helper_superpower: "" as PersonSchema["helper_superpower"],
+    }
+    setValue([...people, newPerson] as FormValues["support_circle"])
+  }
 
   const handleRemovePerson = (index: number) => {
-    const updated = [...people];
-    updated.splice(index, 1);
-    setValue(updated as any);
-  };
+    const updated = [...people]
+    updated.splice(index, 1)
+    setValue(updated as FormValues["support_circle"])
+  }
 
   const handleChange = (index: number, field: keyof PersonSchema, val: string) => {
-    const updated = [...people];
-    updated[index] = { ...updated[index], [field]: val };
-    setValue(updated as any);
-  };
+    const updated = [...people]
+    updated[index] = { ...updated[index], [field]: val }
+    setValue(updated as FormValues["support_circle"])
+  }
 
   // If there's an array-level error, it would be passed to `error`.
   // Wait, Zod will return array-level errors if empty or items errors like "support_circle.0.helper_name".
   // Since we only get `error` for the top field ("support_circle"), nested errors aren't directly available from `useField` unless we use the full form error store. Let's just use `useFormStore` for nested errors if needed.
-  
+
   return (
     <div className="space-y-6">
       <div className="space-y-6">
         {people.map((person, idx) => (
           <div
-            key={idx}
+            key={person.helper_name + idx}
             className="p-4 bg-white/50 dark:bg-zinc-900/50 backdrop-blur-sm rounded-3xl border border-white/20 shadow-xl"
           >
             <div className="flex justify-between items-center mb-4 px-2">
@@ -139,10 +139,10 @@ export const SupportCircleRepeater: React.FC = () => {
           + Add Person
         </Button>
       </div>
-      
-      {typeof error === 'string' && (
+
+      {typeof error === "string" && (
         <p className="text-red-500 text-sm mt-2 text-center">{error}</p>
       )}
     </div>
-  );
-};
+  )
+}

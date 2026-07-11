@@ -1,28 +1,22 @@
-import React, { useId } from "react";
-import { Label } from "@/components/atoms/Label";
-import { Input } from "@/components/atoms/Input";
-import { cn } from "@/lib/utils";
+import * as React from "react"
+import { useId } from "react"
+import { Label } from "@/components/atoms/Label"
+import { Input } from "@/components/atoms/Input"
+import { cn } from "@/lib/utils"
 
-interface ControlledInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'value' | 'onChange'> {
-  label: string;
-  value: string;
-  onChange: (value: string) => void;
-  error?: string;
+interface ControlledInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "value" | "onChange"> {
+  label: string
+  value: string
+  onChange: (value: string) => void
+  error?: string
 }
 
-export const ControlledInput: React.FC<ControlledInputProps> = ({
-  label,
-  value,
-  onChange,
-  error,
-  className,
-  ...props
-}) => {
-  const id = useId();
+export function ControlledInput({ label, value, onChange, error, className, ...props }: ControlledInputProps) {
+  const id = useId()
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onChange(e.target.value);
-  };
+    onChange(e.target.value)
+  }
 
   return (
     <div className="flex flex-col gap-2 p-2">
@@ -42,7 +36,7 @@ export const ControlledInput: React.FC<ControlledInputProps> = ({
             error
               ? "border-red-500 focus-visible:ring-red-500"
               : "focus-visible:ring-[#fe676e] focus-visible:border-[#fe676e]",
-            className,
+            className
           )}
           {...props}
         />
@@ -51,5 +45,5 @@ export const ControlledInput: React.FC<ControlledInputProps> = ({
         <span className="text-xs text-red-500 font-medium italic">{error}</span>
       )}
     </div>
-  );
-};
+  )
+}

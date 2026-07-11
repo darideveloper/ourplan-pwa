@@ -1,28 +1,23 @@
-import React from "react";
-import { Label } from "@/components/atoms/Label";
-import { Input } from "@/components/atoms/Input";
-import { useField } from "@/store/useField";
-import type { FormValues } from "@/store/form";
-import { cn } from "@/lib/utils";
+import * as React from "react"
+import { Label } from "@/components/atoms/Label"
+import { Input } from "@/components/atoms/Input"
+import { useField } from "@/store/useField"
+import type { FormValues } from "@/store/form"
+import { cn } from "@/lib/utils"
 
 interface ValidatedInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  field: keyof FormValues;
-  label: string;
+  field: keyof FormValues
+  label: string
 }
 
-export const ValidatedInput: React.FC<ValidatedInputProps> = ({
-  field,
-  label,
-  className,
-  ...props
-}) => {
-  const { value, error, setValue, mounted } = useField(field);
+export function ValidatedInput({ field, label, className, ...props }: ValidatedInputProps) {
+  const { value, error, setValue, mounted } = useField(field)
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setValue(e.target.value as FormValues[typeof field]);
-  };
+    setValue(e.target.value as FormValues[typeof field])
+  }
 
-  const displayValue = mounted ? (value as string) || "" : "";
+  const displayValue = mounted ? (value as string) || "" : ""
 
   return (
     <div className="flex flex-col gap-2 p-2">
@@ -42,7 +37,7 @@ export const ValidatedInput: React.FC<ValidatedInputProps> = ({
             error
               ? "border-red-500 focus-visible:ring-red-500"
               : "focus-visible:ring-[#fe676e] focus-visible:border-[#fe676e]",
-            className,
+            className
           )}
           {...props}
         />
@@ -51,5 +46,5 @@ export const ValidatedInput: React.FC<ValidatedInputProps> = ({
         <span className="text-xs text-red-500 font-medium italic">{error}</span>
       )}
     </div>
-  );
-};
+  )
+}

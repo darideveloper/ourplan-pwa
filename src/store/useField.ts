@@ -1,6 +1,6 @@
-import React from 'react'
-import { useFormStore, initialState } from './form'
-import type { FormValues } from './form'
+import * as React from "react"
+import { useFormStore, initialState } from "./form"
+import type { FormValues } from "./form"
 
 /**
  * useField — the single store-binding contract for validated atoms.
@@ -27,7 +27,7 @@ export function useField<K extends keyof FormValues>(field: K) {
 
   const setValue = React.useCallback(
     (v: FormValues[K]) => {
-      setField(field, v as any)
+      setField(field, v as FormValues[K])
     },
     [field, setField]
   )

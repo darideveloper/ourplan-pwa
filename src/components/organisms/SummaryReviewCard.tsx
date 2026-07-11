@@ -46,16 +46,16 @@ export function SummaryReviewCard() {
       </div>
 
       <div className="p-6 space-y-8">
-        {sections.map((section, idx) => (
-          <div key={idx} className="space-y-3">
+        {sections.map((section) => (
+          <div key={section.title} className="space-y-3">
             <div className="flex items-center justify-between border-b pb-2">
               <h3 className="text-lg font-medium text-foreground">{section.title}</h3>
               <a href={section.route} className="text-sm text-primary hover:underline font-medium">Edit</a>
             </div>
             <dl className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-3">
-              {section.data.map((item, i) => (
+              {section.data.map((item) => (
                 item.value ? (
-                  <div key={i} className="space-y-1">
+                  <div key={item.label} className="space-y-1">
                     <dt className="text-sm font-medium text-muted-foreground">{item.label}</dt>
                     <dd className="text-sm text-foreground capitalize">{item.value.toString()}</dd>
                   </div>
@@ -73,16 +73,16 @@ export function SummaryReviewCard() {
           {state.support_circle && state.support_circle.length > 0 ? (
             <ul className="space-y-3">
               {state.support_circle.map((person, i) => (
-                <li key={i} className="flex flex-col bg-muted/30 p-3 rounded-lg border border-border">
+                <li key={person.helper_name + i} className="flex flex-col bg-muted/30 p-3 rounded-lg border border-border">
                   <span className="font-medium text-foreground">{person.helper_name} <span className="text-muted-foreground font-normal text-sm">({person.helper_relationship})</span></span>
                   <div className="grid grid-cols-3 gap-2 mt-2 text-sm">
                     <div>
                       <span className="text-muted-foreground block text-xs">Proximity</span>
-                      <span className="capitalize">{person.helper_proximity.replace('_', ' ')}</span>
+                      <span className="capitalize">{person.helper_proximity.replace("_", " ")}</span>
                     </div>
                     <div>
                       <span className="text-muted-foreground block text-xs">Time</span>
-                      <span className="capitalize">{person.helper_time.replace('_', ' ')}</span>
+                      <span className="capitalize">{person.helper_time.replace("_", " ")}</span>
                     </div>
                     <div>
                       <span className="text-muted-foreground block text-xs">Superpower</span>

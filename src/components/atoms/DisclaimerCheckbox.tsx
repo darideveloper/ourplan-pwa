@@ -1,7 +1,7 @@
 import * as React from "react"
-import { useFormStore, type FormValues } from "@/store/form"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Label } from "@/components/ui/label"
+import { useField } from "@/store/useField"
+import { Checkbox } from "@/components/atoms/Checkbox"
+import { Label } from "@/components/atoms/Label"
 import { cn } from "@/lib/utils"
 
 interface DisclaimerCheckboxProps {
@@ -9,13 +9,11 @@ interface DisclaimerCheckboxProps {
 }
 
 export function DisclaimerCheckbox({ className }: DisclaimerCheckboxProps) {
-  const field: keyof FormValues = "disclaimer_agreed"
-  const value = useFormStore((state) => state[field]) as boolean
-  const error = useFormStore((state) => state.errors[field])
-  const setField = useFormStore((state) => state.setField)
+  const field: keyof import("@/store/form").FormValues = "disclaimer_agreed"
+  const { value, error, setValue } = useField(field)
 
   const handleToggle = (checked: boolean) => {
-    setField(field, checked)
+    setValue(checked)
   }
 
   return (
@@ -29,9 +27,9 @@ export function DisclaimerCheckbox({ className }: DisclaimerCheckboxProps) {
         )}
       >
         <div className="flex items-center mt-0.5">
-          <Checkbox 
-            checked={value} 
-            onCheckedChange={(checked) => handleToggle(!!checked)} 
+          <Checkbox
+            checked={!!value}
+            onCheckedChange={(checked) => handleToggle(!!checked)}
             id={field}
           />
         </div>
@@ -41,7 +39,7 @@ export function DisclaimerCheckbox({ className }: DisclaimerCheckboxProps) {
           </span>
         </div>
       </label>
-      
+
       {error && (
         <p className="text-[0.8rem] font-medium text-destructive mt-1">
           {error}

@@ -1,7 +1,7 @@
 import * as React from "react"
-import { useFormStore, type FormValues } from "@/store/form"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Label } from "@/components/ui/label"
+import { useField } from "@/store/useField"
+import { Checkbox } from "@/components/atoms/Checkbox"
+import { Label } from "@/components/atoms/Label"
 import { cn } from "@/lib/utils"
 
 interface Option {
@@ -10,25 +10,23 @@ interface Option {
 }
 
 interface ValidatedCheckboxGroupProps {
-  field: keyof FormValues
+  field: keyof import("@/store/form").FormValues
   label?: string
   options: Option[]
   className?: string
 }
 
 export function ValidatedCheckboxGroup({ field, label, options, className }: ValidatedCheckboxGroupProps) {
-  const value = useFormStore((state) => state[field]) as string[] | undefined
-  const error = useFormStore((state) => state.errors[field])
-  const setField = useFormStore((state) => state.setField)
-  const parentName = useFormStore((state) => state.parent_name)
+  const { value, error, setValue, mounted } = useField(field)
+  const parentName = useField("parent_name")
 
-  const currentValues = value || []
-  
+  const currentValues = (value as string[]) || []
+
   const displayLabel = React.useMemo(() => {
     if (!label) return null
-    const nameToUse = parentName || "your loved one"
+    const nameToUse = parentName.value || "your loved one"
     return label.replace(/\[Name\]|\[Parent Name\]/gi, nameToUse)
-  }, [label, parentName])
+  }, [label, parentName.value])
 
   const handleToggle = (optionValue: string, checked: boolean) => {
     let nextValues: string[]
@@ -37,7 +35,7 @@ export function ValidatedCheckboxGroup({ field, label, options, className }: Val
     } else {
       nextValues = currentValues.filter((v) => v !== optionValue)
     }
-    setField(field, nextValues)
+    setValue(nextValues)
   }
 
   return (
@@ -50,7 +48,7 @@ export function ValidatedCheckboxGroup({ field, label, options, className }: Val
       <div className="space-y-3">
       {options.map((opt) => {
         const isChecked = currentValues.includes(opt.value)
-        
+
         return (
           <label
             key={opt.value}
@@ -61,9 +59,9 @@ export function ValidatedCheckboxGroup({ field, label, options, className }: Val
             )}
           >
             <div className="flex items-center mt-0.5">
-              <Checkbox 
-                checked={isChecked} 
-                onCheckedChange={(checked) => handleToggle(opt.value, !!checked)} 
+              <Checkbox
+                checked={isChecked}
+                onCheckedChange={(checked) => handleToggle(opt.value, !!checked)}
                 id={`${field}-${opt.value}`}
               />
             </div>
@@ -76,7 +74,7 @@ export function ValidatedCheckboxGroup({ field, label, options, className }: Val
         )
       })}
       </div>
-      
+
       {error && (
         <p className="text-[0.8rem] font-medium text-destructive mt-1">
           {error}

@@ -600,3 +600,24 @@ The system SHALL dynamically replace the static placeholder `[Name]` in all ques
 #### Scenario: Name is not yet provided
 - **WHEN** the `parent_name` field is empty or not yet filled
 - **THEN** subsequent steps display a fallback such as "your loved one" or "them" (e.g., "Do you have Lasting Power of Attorney registered for your loved one?")
+
+### Requirement: Validated atoms use useField hook exclusively
+
+Every stateful atom component that reads or writes a single form field from the Zustand store SHALL use the `useField(field)` hook. Direct re-implementation of hydration safety (i.e. `const [mounted, setMounted] = useState(false)` + `useEffect(() => setMounted(true))`) SHALL NOT appear in any atom component — that logic belongs solely in `useField`.
+
+#### Scenario: DisclaimerCheckbox uses useField
+
+- **WHEN** `DisclaimerCheckbox.tsx` is read
+- **THEN** it SHALL use `const { value, error, setValue, mounted } = useField(field)` for store access
+- **THEN** it SHALL NOT contain `useState(false)` or `useEffect(() => setMounted(true))` hydration patterns
+
+#### Scenario: ValidatedCheckboxGroup uses useField
+
+- **WHEN** `ValidatedCheckboxGroup.tsx` is read
+- **THEN** it SHALL use `useField(field)` for the primary field
+- **THEN** it SHALL NOT manually implement hydration guards
+
+#### Scenario: All validated atoms are hydration-safe
+
+- **WHEN** any validated atom renders on first paint (before Zustand persist hydrates)
+- **THEN** it SHALL display the correct `initialState` value (not `undefined`) via the `useField` hook

@@ -1,7 +1,7 @@
-import React from "react";
-import { SupportCircleRepeater } from "@/components/molecules/SupportCircleRepeater";
+import * as React from "react"
+import { SupportCircleRepeater } from "@/components/molecules/SupportCircleRepeater"
 
-export const Step4Form: React.FC = () => {
+export function Step4Form() {
   return (
     <div className="w-full animate-in fade-in slide-in-from-bottom-4 duration-700 space-y-8">
       <div className="space-y-4">
@@ -12,5 +12,5 @@ export const Step4Form: React.FC = () => {
 
       <SupportCircleRepeater />
     </div>
-  );
-};
+  )
+}

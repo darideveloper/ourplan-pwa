@@ -1,14 +1,14 @@
-import React from 'react';
-import { cn } from '@/lib/utils';
-import { FiLoader } from 'react-icons/fi';
+import * as React from "react"
+import { cn } from "@/lib/utils"
+import { FiLoader } from "react-icons/fi"
 
 export interface LoadingOverlayProps {
-  isVisible: boolean;
-  message?: string;
+  isVisible: boolean
+  message?: string
 }
 
-export const LoadingOverlay: React.FC<LoadingOverlayProps> = ({ isVisible, message = "Loading..." }) => {
-  if (!isVisible) return null;
+export function LoadingOverlay({ isVisible, message = "Loading..." }: LoadingOverlayProps) {
+  if (!isVisible) return null
 
   return (
     <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-white/80 backdrop-blur-sm transition-opacity duration-300">
@@ -17,5 +17,5 @@ export const LoadingOverlay: React.FC<LoadingOverlayProps> = ({ isVisible, messa
         <p className="text-slate-700 font-medium text-lg">{message}</p>
       </div>
     </div>
-  );
-};
+  )
+}

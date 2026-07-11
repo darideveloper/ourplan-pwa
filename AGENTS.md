@@ -70,6 +70,20 @@ Why? Keeps React islands small and focused. Static content (headings, text, imag
 
 No file outside `src/components/atoms/*` may import from `src/components/ui/*`; every shadcn primitive is consumed only via its atom wrapper. The `atoms/` folder has two tiers: **presentation wrappers** (e.g. `Input`, `Button`) that re-export a shadcn primitive unchanged, and **stateful atoms** (e.g. `ValidatedInput`, `ContinueButton`) that wrap a presentation wrapper plus a `useField` / store binding. Stateful atoms import from presentation wrappers, never from `ui/*`.
 
+## Component Patterns
+
+Every React component SHALL follow these conventions (established by `standardise-component-patterns` change):
+
+- **Declaration**: Use `export function ComponentName({ ... }: Props)`. Never `export const ComponentName: React.FC<Props>`, bare `export const ComponentName =`, or `React.FC`.
+- **React import**: Use `import * as React from "react"` — namespace import, never default import. Named imports (e.g. `useId`) may be added alongside.
+- **Store access**: Validated atoms MUST use `useField(field)` from `@/store/useField`. Never re-implement hydration safety manually. Non-validated components (ProgressBar, ContinueButton) MAY use `useFormStore` directly.
+- **Semicolons**: None. Omit all trailing semicolons.
+- **Quotes**: Double quotes for all string literals (imports, JSX attributes, inline strings).
+- **Path aliases**: Use `@/` for cross-directory imports. Same-directory imports MAY use relative paths.
+- **Keys**: Stable identifiers (e.g. `key={item.id}`, `key={option.value}`). Never `key={idx}` or `key={i}`.
+- **Type safety**: No `as any` casts. Use typed assertions (`as FormValues["field"]`) or inferred types.
+- **`"use client"` directive**: Never used in this project (Astro convention, not Next.js).
+
 ## Conventions
 
 - **Branch workflow** — create a feature branch for every change; use OpenSpec (`opsx-new` → `opsx-apply` → `opsx-verify` → `opsx-sync-specs` → `opsx-archive`)

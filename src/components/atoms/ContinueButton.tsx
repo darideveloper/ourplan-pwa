@@ -1,28 +1,25 @@
-import React from "react";
-import { Button } from "@/components/atoms/Button";
-import { useFormStore } from "@/store/form";
-import type { StepPath } from "@/store/form";
+import * as React from "react"
+import { Button } from "@/components/atoms/Button"
+import { useFormStore } from "@/store/form"
+import type { StepPath } from "@/store/form"
 
 interface ContinueButtonProps {
-  stepPath: StepPath;
-  label?: string;
+  stepPath: StepPath
+  label?: string
 }
 
-export const ContinueButton: React.FC<ContinueButtonProps> = ({
-  stepPath,
-  label = "Continue",
-}) => {
-  const advanceStep = useFormStore((state) => state.advanceStep);
-  const setIsNavigating = useFormStore((state) => state.setIsNavigating);
+export function ContinueButton({ stepPath, label = "Continue" }: ContinueButtonProps) {
+  const advanceStep = useFormStore((state) => state.advanceStep)
+  const setIsNavigating = useFormStore((state) => state.setIsNavigating)
 
   const handleClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    const nextUrl = advanceStep(stepPath);
+    e.preventDefault()
+    const nextUrl = advanceStep(stepPath)
     if (nextUrl) {
-      setIsNavigating(true);
-      window.location.href = nextUrl;
+      setIsNavigating(true)
+      window.location.href = nextUrl
     }
-  };
+  }
 
   return (
     <Button
@@ -40,5 +37,5 @@ export const ContinueButton: React.FC<ContinueButtonProps> = ({
         <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
       </svg>
     </Button>
-  );
-};
+  )
+}

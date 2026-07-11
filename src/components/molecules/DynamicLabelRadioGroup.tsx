@@ -1,8 +1,8 @@
-import React from 'react'
-import { ValidatedRadioGroup } from '../atoms/ValidatedRadioGroup'
-import { useFormStore } from '@/store/form'
-import { useShallow } from 'zustand/react/shallow'
-import type { FormValues } from '@/store/form'
+import * as React from "react"
+import { ValidatedRadioGroup } from "@/components/atoms/ValidatedRadioGroup"
+import { useFormStore } from "@/store/form"
+import { useShallow } from "zustand/react/shallow"
+import type { FormValues } from "@/store/form"
 
 interface Option {
   value: string
@@ -18,13 +18,7 @@ interface DynamicLabelRadioGroupProps {
   fallbackLabel: string
 }
 
-export const DynamicLabelRadioGroup: React.FC<DynamicLabelRadioGroupProps> = ({
-  field,
-  options,
-  labelTemplate,
-  labelFields,
-  fallbackLabel,
-}) => {
+export function DynamicLabelRadioGroup({ field, options, labelTemplate, labelFields, fallbackLabel }: DynamicLabelRadioGroupProps) {
   const [mounted, setMounted] = React.useState(false)
   React.useEffect(() => setMounted(true), [])
 
@@ -42,14 +36,14 @@ export const DynamicLabelRadioGroup: React.FC<DynamicLabelRadioGroupProps> = ({
     if (!mounted) return fallbackLabel
 
     const allPresent = labelFields.every(
-      (f) => fieldValues[f as string] && String(fieldValues[f as string]).trim() !== ''
+      (f) => fieldValues[f as string] && String(fieldValues[f as string]).trim() !== ""
     )
     if (!allPresent) return fallbackLabel
 
     let result = labelTemplate
     for (const fieldName of labelFields) {
       result = result.replace(
-        new RegExp(`\\{${String(fieldName)}\\}`, 'g'),
+        new RegExp(`\\{${String(fieldName)}\\}`, "g"),
         String(fieldValues[fieldName as string])
       )
     }

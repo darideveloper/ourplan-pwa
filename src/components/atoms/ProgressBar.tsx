@@ -6,12 +6,14 @@ const STEP_LABELS = ["Step 1", "Step 2", "Step 3", "Step 4"]
 
 export function ProgressBar({ currentPath }: { currentPath?: string }) {
   const currentStep = useFormStore((state) => state.currentStep)
+  const stepValidity = useFormStore((state) => state.stepValidity)
   const [mounted, setMounted] = React.useState(false)
   React.useEffect(() => setMounted(true), [])
 
   const activePath = mounted ? window.location.pathname : (currentPath || "")
   const completedIdx = mounted ? getStepIndex(currentStep) : -1
   const activeIdx = getStepIndex(activePath)
+  const currentStepValid = stepValidity[activePath] ?? false
 
   // Hide on welcome page
   if (activePath === "/") return null
@@ -26,6 +28,8 @@ export function ProgressBar({ currentPath }: { currentPath?: string }) {
             const isCompleted = idx <= completedIdx
             const isActive = idx === activeIdx
             const isFuture = idx > completedIdx + 1
+            const isForwardFromActive = idx > activeIdx
+            const isNavDisabled = isFuture || (isForwardFromActive && !currentStepValid)
 
             return (
               <div key={path} className="flex items-center">
@@ -33,10 +37,10 @@ export function ProgressBar({ currentPath }: { currentPath?: string }) {
                   href={path}
                   className={cn(
                     "flex items-center gap-2 transition-colors",
-                    isFuture ? "cursor-default" : ""
+                    isNavDisabled ? "cursor-default opacity-40" : ""
                   )}
                   onClick={(e) => {
-                    if (isFuture) e.preventDefault()
+                    if (isNavDisabled) e.preventDefault()
                   }}
                 >
                   <span

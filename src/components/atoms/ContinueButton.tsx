@@ -1,6 +1,7 @@
 import * as React from "react"
+import { z } from "zod"
 import { Button } from "@/components/atoms/Button"
-import { useFormStore } from "@/store/form"
+import { useFormStore, stepSchemas } from "@/store/form"
 import type { StepPath } from "@/store/form"
 
 interface ContinueButtonProps {
@@ -11,6 +12,22 @@ interface ContinueButtonProps {
 export function ContinueButton({ stepPath, label = "Continue" }: ContinueButtonProps) {
   const advanceStep = useFormStore((state) => state.advanceStep)
   const setIsNavigating = useFormStore((state) => state.setIsNavigating)
+  const isValid = useFormStore((state) => state.stepValidity[stepPath] ?? false)
+
+  React.useEffect(() => {
+    const state = useFormStore.getState()
+    if (state.stepValidity[stepPath] !== undefined) return
+    const schema = stepSchemas[stepPath]
+    if (!schema) return
+    const data: Record<string, unknown> = {}
+    const shape = schema.shape as Record<string, z.ZodTypeAny>
+    for (const key of Object.keys(shape)) {
+      data[key] = state[key as keyof typeof state]
+    }
+    useFormStore.setState({
+      stepValidity: { ...state.stepValidity, [stepPath]: schema.safeParse(data).success }
+    })
+  }, [stepPath])
 
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault()
@@ -24,6 +41,7 @@ export function ContinueButton({ stepPath, label = "Continue" }: ContinueButtonP
   return (
     <Button
       onClick={handleClick}
+      disabled={!isValid}
       className="w-full sm:w-auto bg-slate-900 hover:bg-slate-800 text-white focus-visible:ring-[#fe676e]"
     >
       {label}

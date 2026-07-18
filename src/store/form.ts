@@ -260,6 +260,7 @@ export const fieldSchemaMap: Map<string, z.ZodTypeAny> = (() => {
 interface FormStore extends FormState {
   errors: Record<string, string>;
   currentStep: StepPath;
+  stepValidity: Record<string, boolean>;
   isNavigating: boolean;
   setIsNavigating: (isNavigating: boolean) => void;
   setField: {
@@ -295,40 +296,48 @@ export const useFormStore = create<FormStore>()(
       ...initialState,
       errors: {},
       currentStep: "",
+      stepValidity: {},
       isNavigating: false,
       setIsNavigating: (isNavigating) => set({ isNavigating }),
       setField: (field: string, value: unknown) => {
         const isDotted = field.includes(".")
 
-        // For dotted paths, extract the leaf field name for schema lookup
         const schemaKey = isDotted ? field.split(".").pop()! : field
-        const schema = fieldSchemaMap.get(schemaKey)
-
-        if (schema) {
-          const validation = schema.safeParse(value);
-          if (!validation.success) {
-            const errorMsg = validation.error.issues?.[0]?.message || 'Invalid input';
-            set((state) => {
-              const updated = isDotted
-                ? setNestedValue(state as Record<string, unknown>, field, value)
-                : { ...state, [field]: value }
-              return {
-                ...updated,
-                errors: { ...state.errors, [field]: errorMsg }
-              }
-            });
-            return;
-          }
-        }
+        const fieldSchema = fieldSchemaMap.get(schemaKey)
 
         set((state) => {
-          const newErrors = { ...state.errors };
-          delete newErrors[field];
+          const newErrors = { ...state.errors }
+
+          if (fieldSchema) {
+            const validation = fieldSchema.safeParse(value)
+            if (!validation.success) {
+              newErrors[field] = validation.error.issues?.[0]?.message || 'Invalid input'
+            } else {
+              delete newErrors[field]
+            }
+          } else {
+            delete newErrors[field]
+          }
+
           const updated = isDotted
             ? setNestedValue(state as Record<string, unknown>, field, value)
             : { ...state, [field]: value }
-          return { ...updated, errors: newErrors }
-        });
+
+          // Compute step validity for the current page
+          const currentPath = window.location.pathname
+          const stepSchema = stepSchemas[currentPath]
+          let stepValidity = { ...state.stepValidity }
+          if (stepSchema) {
+            const data: Record<string, unknown> = {}
+            const shape = stepSchema.shape as Record<string, z.ZodTypeAny>
+            for (const key of Object.keys(shape)) {
+              data[key] = updated[key as keyof typeof updated] ?? state[key as keyof typeof state]
+            }
+            stepValidity[currentPath] = stepSchema.safeParse(data).success
+          }
+
+          return { ...updated, errors: newErrors, stepValidity }
+        })
       },
       advanceStep: (completedPath) => {
         const schema = stepSchemas[completedPath]
@@ -376,7 +385,7 @@ export const useFormStore = create<FormStore>()(
 
         return getNextStep(completedPath);
       },
-      reset: () => set({ ...initialState, errors: {}, currentStep: "" }),
+      reset: () => set({ ...initialState, errors: {}, currentStep: "", stepValidity: {} }),
     }),
     {
       name: 'ourplan-form-storage',

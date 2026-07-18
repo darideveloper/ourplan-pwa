@@ -6,7 +6,7 @@ import type { FormValues } from "@/store/form"
 import { cn } from "@/lib/utils"
 
 interface ValidatedInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  field: keyof FormValues
+  field: keyof FormValues | string
   label: string
 }
 
@@ -14,7 +14,7 @@ export function ValidatedInput({ field, label, className, ...props }: ValidatedI
   const { value, error, setValue, mounted } = useField(field)
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setValue(e.target.value as FormValues[typeof field])
+    setValue(e.target.value)
   }
 
   const displayValue = mounted ? (value as string) || "" : ""

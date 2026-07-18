@@ -14,20 +14,22 @@ The required wrapper set as of this change:
 
 | shadcn module (in `components/ui/`) | Atom wrapper (in `components/atoms/`) |
 |---|---|
+| `button.tsx` → `Button` | `Button.tsx` → `Button` |
+| `checkbox.tsx` → `Checkbox` | `Checkbox.tsx` → `Checkbox` |
 | `input.tsx` → `Input` | `Input.tsx` → `Input` |
 | `label.tsx` → `Label` | `Label.tsx` → `Label` |
 | `radio-group.tsx` → `RadioGroup` | `RadioGroup.tsx` → `RadioGroup` |
 | `radio-group.tsx` → `RadioGroupItem` | `RadioGroupItem.tsx` → `RadioGroupItem` |
-| `button.tsx` → `Button` | `Button.tsx` → `Button` |
+| `select.tsx` → `Select`, `SelectContent`, `SelectItem`, `SelectTrigger`, `SelectValue` | `Select.tsx` → (re-exports all five) |
 
-#### Scenario: All five wrappers exist
+#### Scenario: All seven wrapper groups exist
 
 - **WHEN** the directory `src/components/atoms/` is listed
-- **THEN** it SHALL contain `Input.tsx`, `Label.tsx`, `RadioGroup.tsx`, `RadioGroupItem.tsx`, and `Button.tsx`
+- **THEN** it SHALL contain `Button.tsx`, `Checkbox.tsx`, `Input.tsx`, `Label.tsx`, `RadioGroup.tsx`, `RadioGroupItem.tsx`, and `Select.tsx`
 
 #### Scenario: Atom wrapper re-exports the shadcn primitive
 
-- **WHEN** any of the five atom wrappers is read
+- **WHEN** any of the seven atom wrappers is read
 - **THEN** it SHALL contain a `export { … } from "@/components/ui/<primitive>"` (or equivalent default re-export) and SHALL NOT redefine the underlying component implementation
 
 ### Requirement: Atom wrappers are pass-through only
@@ -56,7 +58,7 @@ No file under `src/` other than files inside `src/components/atoms/` SHALL impor
 #### Scenario: Non-atom files do not import `ui/`
 
 - **WHEN** `rg "from ['\"]@/components/ui/" src/` is executed
-- **THEN** the only matching files SHALL be inside `src/components/atoms/`, and SHALL be the five wrapper files (`Input.tsx`, `Label.tsx`, `RadioGroup.tsx`, `RadioGroupItem.tsx`, `Button.tsx`)
+- **THEN** the only matching files SHALL be inside `src/components/atoms/`, and SHALL be the wrapper files (`Button.tsx`, `Checkbox.tsx`, `Input.tsx`, `Label.tsx`, `RadioGroup.tsx`, `RadioGroupItem.tsx`, `Select.tsx`)
 
 ### Requirement: shadcn primitives are not edited
 
@@ -82,12 +84,12 @@ All stateful atom files in `src/components/atoms/` that contain a React componen
 
 #### Scenario: Stateful atoms use function declaration
 
-- **WHEN** any stateful atom file in `src/components/atoms/` (ValidatedInput.tsx, ValidatedRadioGroup.tsx, ContinueButton.tsx, ControlledInput.tsx, ControlledSelect.tsx, DisclaimerCheckbox.tsx, SummarySubmitButton.tsx, ValidatedCheckboxGroup.tsx, ProgressBar.tsx, ResumeRedirect.tsx) is read
+- **WHEN** any stateful atom file in `src/components/atoms/` (ValidatedInput.tsx, ValidatedRadioGroup.tsx, ValidatedSelect.tsx, ContinueButton.tsx, DisclaimerCheckbox.tsx, SummarySubmitButton.tsx, ValidatedCheckboxGroup.tsx, ProgressBar.tsx, ResumeRedirect.tsx) is read
 - **THEN** the component declaration SHALL be `export function` followed by the PascalCase component name
 
 #### Scenario: Re-export wrappers remain unchanged
 
-- **WHEN** a presentation wrapper (Input.tsx, Label.tsx, Button.tsx, RadioGroup.tsx, RadioGroupItem.tsx) is read
+- **WHEN** a presentation wrapper (Input.tsx, Label.tsx, Button.tsx, Checkbox.tsx, Select.tsx, RadioGroup.tsx, RadioGroupItem.tsx) is read
 - **THEN** it SHALL still contain a single re-export statement and no component declaration
 
 ### Requirement: Atom files import React as namespace

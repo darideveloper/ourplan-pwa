@@ -1,40 +1,58 @@
 import * as React from "react"
-import { useFormStore, initialState } from "./form"
+import { z } from "zod"
+import { useFormStore, initialState, getNestedValue, fieldSchemaMap } from "./form"
 import type { FormValues } from "./form"
 
-/**
- * useField — the single store-binding contract for validated atoms.
- *
- * Each validated atom (ValidatedInput, ValidatedRadioGroup, and future atoms)
- * calls `useField(field)` to obtain its state. The hook owns the hydration
- * safety gate so atoms don't re-implement it.
- *
- * ## Hydration contract
- *
- * `mounted` starts `false` and flips to `true` after the first client-side
- * effect runs. Before mount, `value` returns the field's initial/empty value
- * (from `initialState` in form.ts) so that server-rendered HTML and the first
- * client render match exactly. Atoms MUST consume `value` from this hook (not
- * from `useFormStore` directly) to avoid hydration mismatches.
- */
-export function useField<K extends keyof FormValues>(field: K) {
+function getDefaultForField(field: string): unknown {
+  const leafName = field.includes(".") ? field.split(".").pop()! : field
+  const schema = fieldSchemaMap.get(leafName)
+  if (!schema) return ""
+  if (schema instanceof z.ZodString) return ""
+  if (schema instanceof z.ZodEnum) return undefined
+  if (schema instanceof z.ZodArray) return []
+  return undefined
+}
+
+export function useField<K extends keyof FormValues>(field: K): {
+  value: FormValues[K]
+  error: string | undefined
+  setValue: (v: FormValues[K]) => void
+  mounted: boolean
+}
+export function useField(field: string): {
+  value: unknown
+  error: string | undefined
+  setValue: (v: unknown) => void
+  mounted: boolean
+}
+export function useField(field: string) {
   const [mounted, setMounted] = React.useState(false)
   React.useEffect(() => setMounted(true), [])
 
-  const value = useFormStore((state) => state[field])
-  const error = useFormStore((state) => state.errors[field as string])
+  const isDotted = field.includes(".")
   const setField = useFormStore((state) => state.setField)
 
+  const value = useFormStore((state) =>
+    isDotted ? getNestedValue(state as Record<string, unknown>, field) : state[field as keyof typeof state]
+  )
+  const error = useFormStore((state) => state.errors[field])
+
   const setValue = React.useCallback(
-    (v: FormValues[K]) => {
-      setField(field, v as FormValues[K])
+    (v: unknown) => {
+      setField(field, v)
     },
     [field, setField]
   )
 
-  const safeValue: FormValues[K] = mounted
-    ? (value as FormValues[K])
-    : (initialState[field] as FormValues[K])
+  let safeValue: unknown
+  if (mounted) {
+    safeValue = value
+  } else if (isDotted) {
+    const fallback = getNestedValue(initialState as Record<string, unknown>, field)
+    safeValue = fallback !== undefined ? fallback : getDefaultForField(field)
+  } else {
+    safeValue = initialState[field as keyof typeof initialState]
+  }
 
   return { value: safeValue, error, setValue, mounted }
 }

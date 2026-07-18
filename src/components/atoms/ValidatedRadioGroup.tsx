@@ -3,7 +3,6 @@ import { Label } from "@/components/atoms/Label"
 import { RadioGroup } from "@/components/atoms/RadioGroup"
 import { RadioGroupItem } from "@/components/atoms/RadioGroupItem"
 import { useField } from "@/store/useField"
-import { useFormStore } from "@/store/form"
 import type { FormValues } from "@/store/form"
 import { cn } from "@/lib/utils"
 
@@ -14,25 +13,25 @@ interface Option {
 }
 
 interface ValidatedRadioGroupProps {
-  field: keyof FormValues
+  field: keyof FormValues | string
   label: string
   options: Option[]
 }
 
 export function ValidatedRadioGroup({ field, label, options }: ValidatedRadioGroupProps) {
   const { value, error, setValue, mounted } = useField(field)
-  const parentName = useFormStore(state => state.parent_name)
+  const parentNameField = useField("parent_name")
 
   const handleValueChange = (v: string) => {
-    setValue(v as FormValues[typeof field])
+    setValue(v)
   }
 
   const currentValue = mounted ? (value as string) : undefined
 
   const displayLabel = React.useMemo(() => {
-    const nameToUse = mounted && parentName ? parentName : "your loved one"
+    const nameToUse = mounted && parentNameField.value ? parentNameField.value : "your loved one"
     return label.replace(/\[Name\]|\[Parent Name\]/gi, nameToUse)
-  }, [label, mounted, parentName])
+  }, [label, mounted, parentNameField.value])
 
   const optionIds = React.useMemo(
     () => options.map((o) => `${field}-${o.value}`),

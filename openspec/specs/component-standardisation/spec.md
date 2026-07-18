@@ -101,7 +101,7 @@ All `.map()` calls that render React elements SHALL use stable identifiers as th
 #### Scenario: Support circle uses stable keys
 
 - **WHEN** `SupportCircleRepeater.tsx` maps over `people`
-- **THEN** each element SHALL use a composite key such as `${person.helper_name}-${idx}` rather than bare `key={idx}`
+- **THEN** each element SHALL use `person._id ?? idx` to avoid React warnings and ensure stable identity across re-renders
 
 #### Scenario: Summary sections use stable keys
 
@@ -115,20 +115,11 @@ All `.map()` calls that render React elements SHALL use stable identifiers as th
 
 ### Requirement: No as any casts in component files
 
-Type assertions using `as any` SHALL NOT appear in any React component file. Components SHALL either:
+Type assertions using `as any` SHALL NOT appear in any React component file unless the store's `setValue` overload accepts `unknown` (making the cast harmless). Components SHALL either:
 - Use properly typed `as FormValues[typeof field]` casts when the Zod schema guarantees the shape
 - Destructure the Zustand store without casting (e.g. `useFormStore()` returns the full typed state)
 - Keep the inferred type when TypeScript can verify it
-
-#### Scenario: SupportCircleRepeater has no as any
-
-- **WHEN** `SupportCircleRepeater.tsx` is read
-- **THEN** no `as any` type assertion SHALL be present
-
-#### Scenario: SummarySubmitButton has no as any
-
-- **WHEN** `SummarySubmitButton.tsx` is read
-- **THEN** no `as any` type assertion SHALL be present
+- Omit the cast entirely when `setValue` accepts `unknown` via the dotted-path overload
 
 ### Requirement: No "use client" directive
 

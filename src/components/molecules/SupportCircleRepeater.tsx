@@ -1,9 +1,9 @@
 import * as React from "react"
 import { useField } from "@/store/useField"
-import { ControlledInput } from "@/components/atoms/ControlledInput"
-import { ControlledSelect } from "@/components/atoms/ControlledSelect"
+import { ValidatedInput } from "@/components/atoms/ValidatedInput"
+import { ValidatedSelect } from "@/components/atoms/ValidatedSelect"
 import { Button } from "@/components/atoms/Button"
-import type { PersonSchema, FormValues } from "@/store/form"
+import type { PersonSchema } from "@/store/form"
 
 const relationshipOptions = [
   { label: "Sibling", value: "sibling" },
@@ -35,44 +35,35 @@ const superpowerOptions = [
 export function SupportCircleRepeater() {
   const { value, error, setValue, mounted } = useField("support_circle")
 
-  // Avoid hydration mismatch
   if (!mounted) return null
 
   const people = (value as PersonSchema[]) || []
 
   const handleAddPerson = () => {
-    const newPerson: PersonSchema = {
+    const nextId = people.reduce((max, p) => Math.max(max, p._id ?? 0), 0) + 1
+    const newPerson: PersonSchema & { _id: number } = {
+      _id: nextId,
       helper_name: "",
       helper_relationship: "" as PersonSchema["helper_relationship"],
       helper_proximity: "" as PersonSchema["helper_proximity"],
       helper_time: "" as PersonSchema["helper_time"],
       helper_superpower: "" as PersonSchema["helper_superpower"],
     }
-    setValue([...people, newPerson] as FormValues["support_circle"])
+    setValue([...people, newPerson])
   }
 
   const handleRemovePerson = (index: number) => {
     const updated = [...people]
     updated.splice(index, 1)
-    setValue(updated as FormValues["support_circle"])
+    setValue(updated)
   }
-
-  const handleChange = (index: number, field: keyof PersonSchema, val: string) => {
-    const updated = [...people]
-    updated[index] = { ...updated[index], [field]: val }
-    setValue(updated as FormValues["support_circle"])
-  }
-
-  // If there's an array-level error, it would be passed to `error`.
-  // Wait, Zod will return array-level errors if empty or items errors like "support_circle.0.helper_name".
-  // Since we only get `error` for the top field ("support_circle"), nested errors aren't directly available from `useField` unless we use the full form error store. Let's just use `useFormStore` for nested errors if needed.
 
   return (
     <div className="space-y-6">
       <div className="space-y-6">
         {people.map((person, idx) => (
           <div
-            key={person.helper_name + idx}
+            key={person._id ?? idx}
             className="p-4 bg-white/50 dark:bg-zinc-900/50 backdrop-blur-sm rounded-3xl border border-white/20 shadow-xl"
           >
             <div className="flex justify-between items-center mb-4 px-2">
@@ -88,41 +79,36 @@ export function SupportCircleRepeater() {
               </Button>
             </div>
 
-            <ControlledInput
+            <ValidatedInput
+              field={`support_circle.${idx}.helper_name`}
               label="Name"
-              value={person.helper_name || ""}
-              onChange={(val) => handleChange(idx, "helper_name", val)}
               placeholder="e.g. John"
             />
 
-            <ControlledSelect
+            <ValidatedSelect
+              field={`support_circle.${idx}.helper_relationship`}
               label="Relationship"
-              value={person.helper_relationship || ""}
-              onValueChange={(val) => handleChange(idx, "helper_relationship", val)}
               options={relationshipOptions}
               placeholder="Select relationship"
             />
 
-            <ControlledSelect
+            <ValidatedSelect
+              field={`support_circle.${idx}.helper_proximity`}
               label="Proximity"
-              value={person.helper_proximity || ""}
-              onValueChange={(val) => handleChange(idx, "helper_proximity", val)}
               options={proximityOptions}
               placeholder="Select proximity"
             />
 
-            <ControlledSelect
+            <ValidatedSelect
+              field={`support_circle.${idx}.helper_time`}
               label="Time Availability"
-              value={person.helper_time || ""}
-              onValueChange={(val) => handleChange(idx, "helper_time", val)}
               options={timeOptions}
               placeholder="Select time availability"
             />
 
-            <ControlledSelect
+            <ValidatedSelect
+              field={`support_circle.${idx}.helper_superpower`}
               label="Superpower"
-              value={person.helper_superpower || ""}
-              onValueChange={(val) => handleChange(idx, "helper_superpower", val)}
               options={superpowerOptions}
               placeholder="Select superpower"
             />

@@ -1,5 +1,4 @@
 import * as React from "react"
-import { useId } from "react"
 import { Label } from "@/components/atoms/Label"
 import {
   Select,
@@ -7,7 +6,9 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
+} from "@/components/atoms/Select"
+import { useField } from "@/store/useField"
+import type { FormValues } from "@/store/form"
 import { cn } from "@/lib/utils"
 
 interface Option {
@@ -15,30 +16,29 @@ interface Option {
   value: string
 }
 
-interface ControlledSelectProps {
+interface ValidatedSelectProps {
+  field: keyof FormValues | string
   label: string
-  value: string
-  onValueChange: (value: string) => void
   options: Option[]
   placeholder?: string
-  error?: string
-  className?: string
 }
 
-export function ControlledSelect({ label, value, onValueChange, options, placeholder = "Select an option", error, className }: ControlledSelectProps) {
-  const id = useId()
+export function ValidatedSelect({ field, label, options, placeholder = "Select an option" }: ValidatedSelectProps) {
+  const { value, error, setValue, mounted } = useField(field)
+
+  const currentValue = mounted ? (value as string) || "" : ""
+
+  const handleValueChange = (v: string) => {
+    setValue(v)
+  }
 
   return (
-    <div className={cn("flex flex-col gap-2 p-2", className)}>
-      <Label
-        htmlFor={id}
-        className={cn("cursor-pointer", error ? "text-red-500" : "")}
-      >
+    <div className="flex flex-col gap-2 p-2">
+      <Label className={cn(error ? "text-red-500" : "")}>
         {label}
       </Label>
-      <Select value={value} onValueChange={onValueChange}>
+      <Select value={currentValue} onValueChange={handleValueChange}>
         <SelectTrigger
-          id={id}
           className={cn(
             "w-full bg-white dark:bg-zinc-950 transition-colors rounded-xl border-zinc-200 dark:border-zinc-800",
             error

@@ -55,6 +55,7 @@ export const thirdStepSchema = z.object({
 export type ThirdStepState = z.infer<typeof thirdStepSchema>
 
 export const personSchema = z.object({
+  _id: z.number().optional(),
   helper_name: z.string().min(1, "Name is required"),
   helper_relationship: z.enum(["sibling", "partner", "grandchild", "extended_family", "friend_neighbor"], {
     required_error: "Relationship is required",
@@ -131,16 +132,67 @@ export const stepSchemas: Record<string, z.ZodObject<any>> = {
   "/summary": summarySchema,
 }
 
+// --- Nested Path Utilities ---
+
+export function getNestedValue(obj: Record<string, unknown>, path: string): unknown {
+  const segments = path.split(".")
+  let current: unknown = obj
+  for (const seg of segments) {
+    if (current == null || typeof current !== "object") return undefined
+    if (Array.isArray(current)) {
+      const idx = parseInt(seg, 10)
+      if (isNaN(idx) || idx < 0 || idx >= current.length) return undefined
+      current = current[idx]
+    } else {
+      current = (current as Record<string, unknown>)[seg]
+    }
+  }
+  return current
+}
+
+export function setNestedValue<T extends Record<string, unknown>>(obj: T, path: string, value: unknown): T {
+  const segments = path.split(".")
+  if (segments.length === 0) return obj
+
+  const [first, ...rest] = segments
+  if (rest.length === 0) {
+    return { ...obj, [first]: value }
+  }
+
+  const isArrayIndex = /^\d+$/.test(rest[0])
+  const current = (obj as Record<string, unknown>)[first]
+
+  if (isArrayIndex) {
+    const arr = Array.isArray(current) ? [...current] : []
+    const idx = parseInt(rest[0], 10)
+    const innerPath = rest.slice(1).join(".")
+    if (innerPath) {
+      arr[idx] = setNestedValue((arr[idx] ?? {}) as Record<string, unknown>, innerPath, value)
+    } else {
+      arr[idx] = value
+    }
+    return { ...obj, [first]: arr }
+  }
+
+  return {
+    ...obj,
+    [first]: setNestedValue(
+      (current ?? {}) as Record<string, unknown>,
+      rest.join("."),
+      value
+    )
+  }
+}
+
 // --- Field → Schema Map ---
 // Built at module load by inverting stepSchemas: each field name maps to its owning step schema.
 // Asserts field-name uniqueness across step schemas — fails loud if a field appears in multiple steps.
-export function buildFieldSchemaMap(): Map<keyof FormValues, z.ZodTypeAny> {
-  const map = new Map<keyof FormValues, z.ZodTypeAny>()
+export function buildFieldSchemaMap(): Map<string, z.ZodTypeAny> {
+  const map = new Map<string, z.ZodTypeAny>()
   for (const [stepPath, schema] of Object.entries(stepSchemas)) {
     for (const field of Object.keys(schema.shape)) {
-      const existing = map.get(field as keyof FormValues)
+      const existing = map.get(field)
       if (existing) {
-        // Find the competing step path for the error message
         let competingPath = ''
         for (const [otherPath, otherSchema] of Object.entries(stepSchemas)) {
           if (otherPath !== stepPath && field in otherSchema.shape) {
@@ -153,13 +205,56 @@ export function buildFieldSchemaMap(): Map<keyof FormValues, z.ZodTypeAny> {
           `Field names must be unique across steps. Prefix with the step name (e.g. stepX_${field}).`
         )
       }
-      map.set(field as keyof FormValues, schema.shape[field])
+      map.set(field, schema.shape[field])
     }
   }
   return map
 }
 
-export const fieldSchemaMap = buildFieldSchemaMap()
+function assertNoCollision(map: Map<string, z.ZodTypeAny>, name: string, source: string): void {
+  if (map.has(name)) {
+    throw new Error(
+      `Field "${name}" from nested schema (${source}) collides with existing entry in fieldSchemaMap. ` +
+      `Nested field names must be unique across all schemas.`
+    )
+  }
+}
+
+export function flattenNestedSchemas(): Map<string, z.ZodTypeAny> {
+  const map = new Map<string, z.ZodTypeAny>()
+  for (const [, schema] of Object.entries(stepSchemas)) {
+    for (const key of Object.keys(schema.shape)) {
+      const fieldSchema = schema.shape[key]
+      // Detect z.array() — check for .element property
+      if (fieldSchema instanceof z.ZodArray) {
+        const itemSchema = fieldSchema.element
+        if (itemSchema instanceof z.ZodObject) {
+          for (const subField of Object.keys(itemSchema.shape)) {
+            assertNoCollision(map, subField, `z.array(${key}).element`)
+            map.set(subField, itemSchema.shape[subField])
+          }
+        }
+      }
+    }
+  }
+  return map
+}
+
+export const fieldSchemaMap: Map<string, z.ZodTypeAny> = (() => {
+  const map = buildFieldSchemaMap()
+  const nested = flattenNestedSchemas()
+  for (const [key, schema] of nested) {
+    // Collision detection already ran in flattenNestedSchemas, but double-check against top-level
+    if (map.has(key)) {
+      throw new Error(
+        `Nested field "${key}" collides with a top-level field in fieldSchemaMap. ` +
+        `Field names must be unique across all schemas including nested.`
+      )
+    }
+    map.set(key, schema)
+  }
+  return map
+})()
 
 // --- Zustand Store ---
 interface FormStore extends FormState {
@@ -167,7 +262,10 @@ interface FormStore extends FormState {
   currentStep: StepPath;
   isNavigating: boolean;
   setIsNavigating: (isNavigating: boolean) => void;
-  setField: <K extends keyof FormState>(field: K, value: FormState[K]) => void;
+  setField: {
+    <K extends keyof FormState>(field: K, value: FormState[K]): void;
+    (field: string, value: unknown): void;
+  };
   advanceStep: (completedPath: StepPath) => string | null;
   reset: () => void;
 }
@@ -199,27 +297,37 @@ export const useFormStore = create<FormStore>()(
       currentStep: "",
       isNavigating: false,
       setIsNavigating: (isNavigating) => set({ isNavigating }),
-      setField: (field, value) => {
-        // Look up the owning schema for this field from the registry map
-        const schema = fieldSchemaMap.get(field as keyof FormValues)
+      setField: (field: string, value: unknown) => {
+        const isDotted = field.includes(".")
+
+        // For dotted paths, extract the leaf field name for schema lookup
+        const schemaKey = isDotted ? field.split(".").pop()! : field
+        const schema = fieldSchemaMap.get(schemaKey)
+
         if (schema) {
           const validation = schema.safeParse(value);
           if (!validation.success) {
             const errorMsg = validation.error.issues?.[0]?.message || 'Invalid input';
-            set((state) => ({
-              ...state,
-              [field]: value,
-              errors: { ...state.errors, [field]: errorMsg }
-            }));
+            set((state) => {
+              const updated = isDotted
+                ? setNestedValue(state as Record<string, unknown>, field, value)
+                : { ...state, [field]: value }
+              return {
+                ...updated,
+                errors: { ...state.errors, [field]: errorMsg }
+              }
+            });
             return;
           }
         }
 
-        // If valid or no schema, clear error and update value
         set((state) => {
           const newErrors = { ...state.errors };
           delete newErrors[field];
-          return { ...state, [field]: value, errors: newErrors };
+          const updated = isDotted
+            ? setNestedValue(state as Record<string, unknown>, field, value)
+            : { ...state, [field]: value }
+          return { ...updated, errors: newErrors }
         });
       },
       advanceStep: (completedPath) => {
@@ -256,6 +364,12 @@ export const useFormStore = create<FormStore>()(
           const shapeKeys = Object.keys(shape);
           for (const key of shapeKeys) {
             delete newErrors[key];
+            // Also clear nested errors (e.g. support_circle.0.helper_name)
+            for (const errKey of Object.keys(newErrors)) {
+              if (errKey.startsWith(key + ".")) {
+                delete newErrors[errKey];
+              }
+            }
           }
           return { ...state, currentStep: completedPath, errors: newErrors };
         });
@@ -273,3 +387,7 @@ export const useFormStore = create<FormStore>()(
     }
   )
 )
+
+if (typeof window !== "undefined") {
+  useFormStore.subscribe((state) => console.log("FormStore:", state))
+}

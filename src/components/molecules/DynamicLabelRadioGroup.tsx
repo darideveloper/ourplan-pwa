@@ -11,7 +11,7 @@ interface Option {
 }
 
 interface DynamicLabelRadioGroupProps {
-  field: keyof FormValues
+  field: keyof FormValues | string
   options: Option[]
   labelTemplate: string
   labelFields: (keyof FormValues)[]

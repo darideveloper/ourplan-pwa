@@ -45,6 +45,11 @@ const hasPetsOptions = [
 export function Step3Form() {
   const ourlensCompleted = useFormStore(state => state.ourlens_completed)
   const parentName = useFormStore(state => state.parent_name)
+  const setField = useFormStore(state => state.setField)
+
+  React.useEffect(() => {
+    setField("hazard_flags", [])
+  }, [ourlensCompleted, setField])
 
   const nameOrLovedOne = parentName || "your loved one"
   const namePossessive = parentName ? `${parentName}'s` : "their"
@@ -94,7 +99,7 @@ export function Step3Form() {
       <ValidatedInput
         field="hobbies_social"
         label={`What are ${namePossessive} favourite hobbies or main sources of social interaction right now?`}
-        placeholder="e.g., gardening, church, lunch club"
+        placeholder="e.g., gardening, church, lunch club, watching football, family visits"
       />
     </div>
   )

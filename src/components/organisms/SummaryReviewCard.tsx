@@ -25,7 +25,7 @@ export function SummaryReviewCard() {
       ]
     },
     {
-      title: "Environment, Digital & Life",
+      title: "Environment, Digital & Lifestyle",
       route: "/step3",
       data: [
         { label: "Home Type", value: state.home_type },

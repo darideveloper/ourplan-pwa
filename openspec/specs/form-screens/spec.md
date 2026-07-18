@@ -483,32 +483,37 @@ The Zustand store (`src/store/form.ts`) maps to this spec as follows:
 form.ts                              This spec
 ─────────────────────────────────────────────────
 firstStepSchema (L6-13)       <--->  Screen 1 fields (1-3)
-(not yet defined)             <--->  Screen 2 fields (4-6)
-(not yet defined)             <--->  Screen 3 fields (7-11 + conditional 8b)
-(not yet defined)             <--->  Screen 4 fields (12-16, dynamic array)
-(not yet defined)             <--->  Screen 5 fields (17-19)
-stepSchemas registry (L44-46) <--->  One entry per screen
-STEP_ORDER (L24)              <--->  Screen flow order
+secondStepSchema (L17-30)     <--->  Screen 2 fields (4-6)
+thirdStepSchema (L34-53)      <--->  Screen 3 fields (7-11 + conditional 8b)
+fourthStepSchema (L80-83)     <--->  Screen 4 fields (12-16, dynamic array)
+summarySchema (L86-93)        <--->  Screen 5 fields (17-19)
+stepSchemas registry (L127-133) <--->  One entry per screen
+STEP_ORDER (L107)             <--->  Screen flow order
 ```
 
-### Required Store Additions
+### Store Additions (all implemented)
+
+All schemas, state fields, and step registrations listed below are present in `src/store/form.ts`:
 
 ```
-Need to add schemas:
+Schemas (all defined):
+  firstStepSchema    -> user_name, parent_name, parent_health
   secondStepSchema   -> lpa_status, psr_status, documents_loc
   thirdStepSchema    -> home_type, ourlens_completed, hazard_flags,
                         digital_literacy, has_pets, hobbies_social
   fourthStepSchema   -> support_circle (z.array(personSchema))
   summarySchema      -> disclaimer_agreed, email_recipients, custom_message
 
-Need to extend FormState with:
+FormState (all fields in initialState):
+  user_name, parent_name, parent_health,
   lpa_status, psr_status, documents_loc,
   home_type, ourlens_completed, hazard_flags,
   digital_literacy, has_pets, hobbies_social,
   support_circle: Person[],
   disclaimer_agreed, email_recipients, custom_message
 
-Need to register all schemas in stepSchemas:
+stepSchemas (all registered):
+  "/step1": firstStepSchema,
   "/step2": secondStepSchema,
   "/step3": thirdStepSchema,
   "/step4": fourthStepSchema,
@@ -523,10 +528,10 @@ Need to register all schemas in stepSchemas:
 Screen  Route       Status        Fields  Components
 ──────  ─────       ──────        ──────  ──────────
 Step 1  /step1      DONE          3/3     ValidatedInput(x2), ParentHealthRadioGroup
-Step 2  /step2      PLACEHOLDER   0/3     —
-Step 3  /step3      DONE          5/5     ValidatedRadioGroup, ValidatedCheckboxGroup, TextInput
-Step 4  /step4      DONE          5/5     ValidatedSelect, SupportCircleRepeater, TextInput
-Summary /summary    PLACEHOLDER   0/3     — (needs disclaimer gate)
+Step 2  /step2      DONE          3/3     DynamicLabelRadioGroup(x3)
+Step 3  /step3      DONE          5/5     ValidatedRadioGroup, ValidatedCheckboxGroup, ValidatedInput
+Step 4  /step4      DONE          5/5     ValidatedSelect(x4), SupportCircleRepeater
+Summary /summary    DONE          3/3     ValidatedInput, ValidatedTextarea, DisclaimerCheckbox, SummarySubmitButton
 ```
 
 ---
@@ -621,3 +626,45 @@ Every stateful atom component that reads or writes a single form field from the 
 
 - **WHEN** any validated atom renders on first paint (before Zustand persist hydrates)
 - **THEN** it SHALL display the correct `initialState` value (not `undefined`) via the `useField` hook
+
+### Requirement: Conditional hazard_flags validation
+
+The `hazard_flags` field SHALL be cleared when its trigger field `ourlens_completed` changes value to prevent stale data from a different option set being submitted.
+
+#### Scenario: hazard_flags resets when ourlens_completed toggles
+
+- **WHEN** the user has selected `hazard_flags` values under one branch (e.g., `ourlens_completed === "yes"`)
+- **AND** the user changes `ourlens_completed` to a different value (e.g., `"no_but_wants"`)
+- **THEN** all previously selected `hazard_flags` values are cleared
+- **THEN** the user sees the new set of checkbox options with nothing pre-selected
+
+### Requirement: Summary Review and Submission includes email and message fields
+
+The summary page SHALL render `email_recipients` (text input) and `custom_message` (textarea) fields per the existing field definitions in the `form-screens` spec. Both fields are optional.
+
+#### Scenario: Summary page renders email and message inputs
+
+- **WHEN** the user navigates to the summary page
+- **THEN** they see a text input for `email_recipients` with label "Email this plan to your support circle (optional)"
+- **THEN** they see a textarea for `custom_message` with label "Add a personal message (optional)"
+- **THEN** the "Generate My Plan" button remains disabled until `disclaimer_agreed` is checked
+- **WHEN** the user clicks "Generate My Plan"
+- **THEN** `email_recipients` and `custom_message` values are included in the submitted data
+
+### Requirement: Summary section title matches spec
+
+The summary review card SHALL display the title "Environment, Digital & Lifestyle" for the Step 3 section (not "Life").
+
+#### Scenario: Correct section title displayed
+
+- **WHEN** the user views the summary review card
+- **THEN** the Step 3 section heading reads "Environment, Digital & Lifestyle"
+
+### Requirement: hobbies_social placeholder matches spec
+
+The `hobbies_social` text input placeholder SHALL read `"e.g., gardening, church, lunch club, watching football, family visits"`.
+
+#### Scenario: Correct placeholder displayed
+
+- **WHEN** the user is on Step 3
+- **THEN** the hobbies_social input placeholder reads `"e.g., gardening, church, lunch club, watching football, family visits"`

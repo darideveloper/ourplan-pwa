@@ -46,9 +46,13 @@ export function Step3Form() {
   const ourlensCompleted = useFormStore(state => state.ourlens_completed)
   const parentName = useFormStore(state => state.parent_name)
   const setField = useFormStore(state => state.setField)
+  const prevOurlensRef = React.useRef(ourlensCompleted)
 
   React.useEffect(() => {
-    setField("hazard_flags", [])
+    if (prevOurlensRef.current !== ourlensCompleted) {
+      prevOurlensRef.current = ourlensCompleted
+      setField("hazard_flags", [])
+    }
   }, [ourlensCompleted, setField])
 
   const nameOrLovedOne = parentName || "your loved one"

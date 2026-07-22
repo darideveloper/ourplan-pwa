@@ -11,5 +11,9 @@ export default defineConfig({
     plugins: [tailwindcss()]
   },
 
-  integrations: [react()]
+  integrations: [react()],
+
+  server: {
+    allowedHosts: process.env.ALLOWED_HOSTS?.split(',').map(s => s.trim()) || undefined,
+  },
 });

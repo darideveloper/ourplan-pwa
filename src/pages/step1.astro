@@ -2,7 +2,6 @@
 import StepLayout from '../layouts/StepLayout.astro';
 import { ValidatedInput } from '@/components/atoms/ValidatedInput';
 import { DynamicLabelRadioGroup } from '@/components/molecules/DynamicLabelRadioGroup';
-import { ResumeRedirect } from '../components/atoms/ResumeRedirect';
 
 const healthOptions = [
   { value: 'independent', label: 'Doing great, completely independent.' },
@@ -17,7 +16,6 @@ const healthOptions = [
   subtitle="Let's start with some basic information so we can personalise your plan beautifully."
   stepPath="/step1"
 >
-  <ResumeRedirect client:load />
   <div class="w-full">
     <ValidatedInput
       field="user_name"

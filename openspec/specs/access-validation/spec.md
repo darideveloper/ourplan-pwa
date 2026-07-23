@@ -34,7 +34,7 @@ The system SHALL display a checkbox for terms and conditions acceptance with Zod
 
 #### Scenario: Terms link is present
 - **WHEN** the terms checkbox label is rendered
-- **THEN** it SHALL include a link to the terms and conditions page (`/terms` or external URL TBD) that opens in a new tab
+- **THEN** it SHALL include a link to `https://ourlivesapp.com/our-plan-terms-and-conditions/` that opens in a new tab
 
 ### Requirement: VerifyButton field-error check
 The `VerifyButton` SHALL check both field errors from the session store before allowing the API call.

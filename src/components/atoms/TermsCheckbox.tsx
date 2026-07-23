@@ -35,7 +35,7 @@ export function TermsCheckbox({ className }: TermsCheckboxProps) {
           <span className="font-medium cursor-pointer leading-relaxed text-sm">
             I agree to the{" "}
             <a
-              href="/terms"
+              href="https://ourlivesapp.com/our-plan-terms-and-conditions/"
               target="_blank"
               rel="noopener noreferrer"
               className="underline text-primary hover:text-primary/80"

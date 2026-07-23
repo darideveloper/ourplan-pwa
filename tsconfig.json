@@ -5,7 +5,8 @@
     "**/*"
   ],
   "exclude": [
-    "dist"
+    "dist",
+    "vite-pwa-assets-generator.config.ts"
   ],
   "compilerOptions": {
     "baseUrl": ".",

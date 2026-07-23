@@ -1,0 +1,30 @@
+---
+import OfflineLayout from '../layouts/OfflineLayout.astro';
+---
+
+<OfflineLayout>
+  <div class="min-h-dvh flex flex-col items-center justify-center px-4 text-center">
+    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="text-muted-foreground mb-4 mx-auto">
+      <line x1="2" y1="12" x2="22" y2="12" stroke-dasharray="3 3" />
+      <circle cx="12" cy="12" r="10" />
+      <line x1="12" y1="8" x2="12" y2="12" />
+      <line x1="12" y1="16" x2="12.01" y2="16" />
+    </svg>
+    <h1 class="text-3xl font-bold text-foreground mb-4">You're Offline</h1>
+    <p class="text-lg text-muted-foreground mb-8 max-w-md">
+      It looks like you&rsquo;ve lost your internet connection. Please check your connection and try again.
+    </p>
+    <button
+      type="button"
+      id="offline-retry-btn"
+      class="inline-flex items-center justify-center px-6 py-3 bg-primary text-primary-foreground font-semibold rounded-lg hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 transition-colors"
+    >
+      Try Again
+    </button>
+  </div>
+  <script>
+    document.getElementById('offline-retry-btn')?.addEventListener('click', () => {
+      window.location.reload();
+    });
+  </script>
+</OfflineLayout>

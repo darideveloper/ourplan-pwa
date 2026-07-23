@@ -36,7 +36,7 @@ export function ValidatedInput({ field, label, className, ...props }: ValidatedI
             "w-full transition-colors",
             error
               ? "border-red-500 focus-visible:ring-red-500"
-              : "focus-visible:ring-[#fe676e] focus-visible:border-[#fe676e]",
+              : "focus-visible:ring-brand-500/40 focus-visible:border-brand-500",
             className
           )}
           {...props}

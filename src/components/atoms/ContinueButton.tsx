@@ -42,7 +42,7 @@ export function ContinueButton({ stepPath, label = "Continue" }: ContinueButtonP
     <Button
       onClick={handleClick}
       disabled={!isValid}
-      className="w-full sm:w-auto bg-slate-900 hover:bg-slate-800 text-white focus-visible:ring-[#fe676e]"
+      className="w-full sm:w-auto bg-gradient-to-r from-brand-500 to-brand-600 hover:from-brand-600 hover:to-brand-700 text-white focus-visible:ring-brand-500/40"
     >
       {label}
       <svg

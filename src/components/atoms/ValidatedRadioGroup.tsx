@@ -57,10 +57,10 @@ export function ValidatedRadioGroup({ field, label, options }: ValidatedRadioGro
               className={cn(
                 "flex items-start gap-3 rounded-lg border p-3 cursor-pointer transition-colors w-full",
                 currentValue === option.value
-                  ? "border-[#fe676e] bg-[#fe676e]/5"
+                  ? "border-brand-500 bg-brand-500/5"
                   : error
                     ? "border-red-200 bg-white hover:border-red-300"
-                    : "border-slate-200 bg-white hover:border-[#fe676e]/40"
+                    : "border-slate-200 bg-white hover:border-brand-500/40"
               )}
             >
               <RadioGroupItem value={option.value} id={id} className="mt-0.5" />
@@ -76,7 +76,7 @@ export function ValidatedRadioGroup({ field, label, options }: ValidatedRadioGro
                 {option.description && (
                   <p className={cn(
                     "mt-1 text-xs transition-colors",
-                    currentValue === option.value ? "text-[#fe676e]" : "text-slate-500"
+                    currentValue === option.value ? "text-brand-500" : "text-slate-500"
                   )}>
                     {option.description}
                   </p>

@@ -13,7 +13,7 @@ export function LoadingOverlay({ isVisible, message = "Loading..." }: LoadingOve
   return (
     <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-white/80 backdrop-blur-sm transition-opacity duration-300">
       <div className="flex flex-col items-center space-y-4 animate-in fade-in zoom-in duration-300">
-        <FiLoader className="h-10 w-10 text-[#fe676e] animate-spin" />
+        <FiLoader className="h-10 w-10 text-brand-500 animate-spin" />
         <p className="text-slate-700 font-medium text-lg">{message}</p>
       </div>
     </div>

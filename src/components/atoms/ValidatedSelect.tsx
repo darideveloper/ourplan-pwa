@@ -43,7 +43,7 @@ export function ValidatedSelect({ field, label, options, placeholder = "Select a
             "w-full bg-white dark:bg-zinc-950 transition-colors rounded-xl border-zinc-200 dark:border-zinc-800",
             error
               ? "border-red-500 focus-visible:ring-red-500"
-              : "focus-visible:ring-[#fe676e] focus-visible:border-[#fe676e]"
+              : "focus-visible:ring-brand-500/40 focus-visible:border-brand-500"
           )}
         >
           <SelectValue placeholder={placeholder} />

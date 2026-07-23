@@ -47,7 +47,7 @@ export function ProgressBar({ currentPath }: { currentPath?: string }) {
                     className={cn(
                       "flex h-7 w-7 items-center justify-center rounded-full text-xs font-medium transition-colors",
                       isActive
-                        ? "bg-[#fe676e] text-white shadow-sm"
+                        ? "bg-brand-500 text-white shadow-sm"
                         : isCompleted
                           ? "bg-slate-800 text-white"
                           : "bg-slate-100 text-slate-400"
@@ -65,7 +65,7 @@ export function ProgressBar({ currentPath }: { currentPath?: string }) {
                     className={cn(
                       "text-xs font-medium hidden sm:inline transition-colors",
                       isActive
-                        ? "text-[#fe676e]"
+                        ? "text-brand-500"
                         : isCompleted
                           ? "text-slate-700"
                           : "text-slate-400"

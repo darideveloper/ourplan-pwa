@@ -27,15 +27,29 @@ The shadcn CSS custom properties in `:root` SHALL use the Ourlens brand palette 
 - **THEN** it SHALL use `#fffffe` for background and `oklch(0.15 0.01 260)` for text
 
 ### Requirement: Dark mode removed
-The system SHALL NOT include `.dark` class support, `@custom-variant dark`, or any `color-scheme: dark` metadata.
 
-#### Scenario: No dark mode toggle
+The system SHALL override Tailwind's built-in `@media (prefers-color-scheme: dark)` variant using `@custom-variant dark (&:where(.no-dark-mode))` to prevent any `dark:` utility classes from activating. The system SHALL set `color-scheme: light` on the `<html>` element.
+
+#### Scenario: No dark mode toggle class
+
 - **WHEN** inspecting the stylesheet
-- **THEN** there SHALL be no `.dark` selector block or `@custom-variant dark` definition
+- **THEN** there SHALL be no `.dark` CSS class definition used for toggling dark mode
 
 #### Scenario: Light mode locked
+
 - **WHEN** the HTML renders
 - **THEN** the `<html>` element SHALL have `style="color-scheme: light;"` and `:root` SHALL omit dark mode variables
+
+#### Scenario: Dark variant overridden
+
+- **WHEN** inspecting the compiled CSS
+- **THEN** the `dark` variant SHALL be overridden via `@custom-variant dark (&:where(.no-dark-mode))` so that no `dark:` Tailwind classes activate regardless of OS-level `prefers-color-scheme`
+
+#### Scenario: Dark classes never activate
+
+- **WHEN** the user has OS-level dark mode preference enabled
+- **AND** they view any page in the application
+- **THEN** no `dark:` Tailwind utility class SHALL apply visual changes
 
 ### Requirement: System font stack
 The system SHALL use the system UI font stack instead of Inter Variable as the primary sans-serif font.

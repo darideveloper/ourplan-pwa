@@ -40,7 +40,7 @@ export function ValidatedSelect({ field, label, options, placeholder = "Select a
       <Select value={currentValue} onValueChange={handleValueChange}>
         <SelectTrigger
           className={cn(
-            "w-full bg-white dark:bg-zinc-950 transition-colors rounded-xl border-zinc-200 dark:border-zinc-800",
+            "w-full bg-white transition-colors rounded-xl border-zinc-200",
             error
               ? "border-red-500 focus-visible:ring-red-500"
               : "focus-visible:ring-brand-500/40 focus-visible:border-brand-500"

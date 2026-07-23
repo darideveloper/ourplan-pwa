@@ -64,15 +64,15 @@ export function SupportCircleRepeater() {
         {people.map((person, idx) => (
           <div
             key={person._id ?? idx}
-            className="p-4 bg-white/50 dark:bg-zinc-900/50 backdrop-blur-sm rounded-3xl border border-white/20 shadow-xl"
+            className="p-4 bg-white/50 backdrop-blur-sm rounded-3xl border border-white/20 shadow-xl"
           >
             <div className="flex justify-between items-center mb-4 px-2">
-              <h3 className="font-semibold text-lg text-zinc-800 dark:text-zinc-100">
+              <h3 className="font-semibold text-lg text-zinc-800">
                 Person #{idx + 1}
               </h3>
               <Button
                 variant="ghost"
-                className="text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30"
+                className="text-red-500 hover:text-red-600 hover:bg-red-50"
                 onClick={() => handleRemovePerson(idx)}
               >
                 Remove
@@ -120,7 +120,7 @@ export function SupportCircleRepeater() {
         <Button
           onClick={handleAddPerson}
           variant="outline"
-          className="rounded-full px-6 py-6 border-2 border-dashed bg-transparent hover:bg-zinc-100 dark:hover:bg-zinc-800"
+          className="rounded-full px-6 py-6 border-2 border-dashed bg-transparent hover:bg-zinc-100"
         >
           + Add Person
         </Button>

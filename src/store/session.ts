@@ -3,6 +3,7 @@ import { persist } from "zustand/middleware"
 import { z } from "zod"
 import { validateCode } from "@/lib/api/validate-code"
 import { FetchError } from "@/lib/api/client"
+import { INVITE_EXPIRED_MESSAGE } from "@/lib/api/constants"
 
 export const codeInputSchema = z.string().min(1, "Enter your invitation code")
 
@@ -98,7 +99,7 @@ export const useSessionStore = create<SessionState>()(
             set({
               isValid: false,
               isValidating: false,
-              apiError: "That invitation code is not recognised or has expired. Please check and try again.",
+              apiError: INVITE_EXPIRED_MESSAGE,
             })
           }
         } catch (err) {

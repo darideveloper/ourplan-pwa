@@ -4,4 +4,5 @@ export interface ValidateCodeResponse {
 
 export interface GenerateReportResponse {
   pdfUrl: string
+  valid?: boolean
 }

@@ -1,8 +1,10 @@
 import * as React from "react"
+import { createPortal } from "react-dom"
 import { useFormStore, buildValueLabels } from "@/store/form"
 import { useSessionStore } from "@/store/session"
 import { generateReport } from "@/lib/api/generate-report"
 import { FetchError } from "@/lib/api/client"
+import { INVITE_EXPIRED_MESSAGE } from "@/lib/api/constants"
 import { GenerationProgressBar } from "@/components/molecules/GenerationProgressBar"
 import { Button } from "@/components/atoms/Button"
 import { cn } from "@/lib/utils"
@@ -16,6 +18,7 @@ type SubmitState =
   | { status: "generating"; progress: number; message: string }
   | { status: "complete"; pdfUrl: string }
   | { status: "error"; message: string }
+  | { status: "expired" }
 
 const MAX_POLL_MS = 180000
 const POLL_INTERVAL = 10000
@@ -96,6 +99,12 @@ export function SummarySubmitButton({ className }: SummarySubmitButtonProps) {
 
     generateReport(payload)
       .then((response) => {
+        if (response.valid === false) {
+          clearTimers()
+          setSubmitState({ status: "expired" })
+          return
+        }
+
         const { pdfUrl } = response
         const pollStart = Date.now()
 
@@ -142,6 +151,14 @@ export function SummarySubmitButton({ className }: SummarySubmitButtonProps) {
     setSubmitState({ status: "idle" })
   }
 
+  const handleRequestNewCode = () => {
+    generationRef.current += 1
+    clearTimers()
+    useFormStore.getState().reset()
+    useSessionStore.getState().reset()
+    window.location.href = "/"
+  }
+
   if (submitState.status === "complete" && showButton) {
     return (
       <a
@@ -173,6 +190,22 @@ export function SummarySubmitButton({ className }: SummarySubmitButtonProps) {
         message={submitState.message}
         className="mt-4"
       />
+    )
+  }
+
+  if (submitState.status === "expired") {
+    return createPortal(
+      <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center">
+        <div className="bg-white rounded-xl p-6 max-w-sm w-full mx-4 space-y-4 shadow-2xl">
+          <p className="text-sm font-medium text-destructive">
+            {INVITE_EXPIRED_MESSAGE}
+          </p>
+          <Button onClick={handleRequestNewCode} className="w-full" size="lg">
+            Enter New Invitation Code
+          </Button>
+        </div>
+      </div>,
+      document.body
     )
   }
 

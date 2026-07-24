@@ -35,7 +35,17 @@ export function DisclaimerCheckbox({ className }: DisclaimerCheckboxProps) {
         </div>
         <div className="space-y-1 leading-none flex-1">
           <span className="font-medium cursor-pointer leading-relaxed text-sm">
-            I understand that this plan is for informational purposes only and does not replace professional legal, financial, or medical advice. I agree to the Terms & Disclaimer.
+            I understand that this plan is for informational purposes only and does not replace professional legal, financial, or medical advice. I agree to the{" "}
+            <a
+              href="https://www.ourlivesapp.com/terms-conditions/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline text-primary hover:text-primary/80"
+              onClick={(e) => e.stopPropagation()}
+            >
+              Terms & Disclaimer
+            </a>
+            .
           </span>
         </div>
       </label>

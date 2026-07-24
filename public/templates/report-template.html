@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title translate="no">OurPlan — Estate Planning Guide</title>
+    <style>
+      @page {
+        size: A4;
+        margin: 20mm;
+      }
+
+      *, *::before, *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      html {
+        font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+        font-size: 16px;
+        line-height: 1.6;
+        color: #1a1a2e;
+        background: #fffffe;
+      }
+
+      body {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+      }
+
+      header {
+        border-bottom: 2px solid #fe676e;
+        padding-bottom: 1.5rem;
+        margin-bottom: 2rem;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      header img {
+        height: 60px;
+        width: auto;
+      }
+
+      footer a:focus-visible {
+        outline: 2px solid #dd4d57;
+        outline-offset: 2px;
+        border-radius: 2px;
+      }
+
+      header h1 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #1a1a2e;
+        line-height: 1.2;
+      }
+
+      header .header-text {
+        text-align: right;
+      }
+
+      header .report-meta {
+        font-size: 0.875rem;
+        color: #666;
+      }
+
+      main {
+        flex: 1;
+      }
+
+      main h2 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #dd4d57;
+        margin-top: 1.5rem;
+        margin-bottom: 0.75rem;
+      }
+
+      main h3 {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #1a1a2e;
+        margin-top: 1rem;
+        margin-bottom: 0.5rem;
+      }
+
+      main p {
+        margin-bottom: 0.75rem;
+      }
+
+      main ul, main ol {
+        margin-bottom: 0.75rem;
+        padding-left: 1.5rem;
+      }
+
+      main li {
+        margin-bottom: 0.25rem;
+      }
+
+      main table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 1rem;
+      }
+
+      main th, main td {
+        border: 1px solid #ddd;
+        padding: 0.5rem 0.75rem;
+        text-align: left;
+      }
+
+      main th {
+        background: #f5f5f5;
+        font-weight: 600;
+      }
+
+      main section {
+        page-break-inside: avoid;
+      }
+
+      main section.page-break {
+        page-break-before: always;
+      }
+
+      footer {
+        border-top: 2px solid #fe676e;
+        padding-top: 1.5rem;
+        margin-top: 2rem;
+        font-size: 0.75rem;
+        color: #666;
+        text-align: center;
+        line-height: 1.5;
+      }
+
+      footer a {
+        color: #dd4d57;
+        text-decoration: underline;
+      }
+
+      footer a:hover {
+        color: #fe676e;
+      }
+
+      @media print {
+        html {
+          font-size: 12pt;
+        }
+
+        header {
+          border-bottom-color: #fe676e;
+        }
+
+        footer {
+          border-top-color: #fe676e;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <img src="https://ourplan.ourlivesapp.com/ourplan-logo.png" alt="OurPlan" width="300" height="300" />
+      <div class="header-text">
+        <h1 translate="no">OurPlan — Estate Planning Guide</h1>
+        <p class="report-meta">Prepared: <span id="report-date"></span></p>
+      </div>
+    </header>
+
+    <main>
+      {{ $('Report Agent').item.json.output }}
+    </main>
+
+    <footer>
+      <p>
+        <span translate="no">OurPlan</span> is an automated informational guide by <span translate="no">Ourlives</span> and does not
+        constitute legal, financial, or clinical medical advice.
+        See full terms at
+        <a href="https://www.ourlivesapp.com">www.ourlivesapp.com</a>.
+      </p>
+    </footer>
+
+    <script>
+      document.getElementById("report-date").textContent =
+        new Date().toLocaleDateString("en-GB", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        });
+    </script>
+  </body>
+</html>

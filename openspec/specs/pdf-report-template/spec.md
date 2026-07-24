@@ -14,7 +14,7 @@ The template SHALL be a self-contained HTML file at `public/templates/report-tem
 
 ### Requirement: Header with branding
 
-The `<header>` element SHALL contain the OurPlan logo, the report title "OurPlan — Estate Planning Guide", and a dynamically generated date.
+The `<header>` element SHALL contain the OurPlan logo, the report title "OurPlan — Planning Guide", and a dynamically generated date.
 
 #### Scenario: Logo present
 - **WHEN** the template renders

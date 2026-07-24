@@ -87,8 +87,6 @@ export const summarySchema = z.object({
   disclaimer_agreed: z.boolean().refine(val => val === true, {
     message: "You must agree to the Terms & Disclaimer to generate your plan",
   }),
-  email_recipients: z.string().optional(),
-  custom_message: z.string().optional(),
 })
 
 export type SummaryStepState = z.infer<typeof summarySchema>
@@ -286,8 +284,6 @@ export const initialState: FormState = {
   hobbies_social: "",
   support_circle: [],
   disclaimer_agreed: false,
-  email_recipients: "",
-  custom_message: "",
 }
 
 export const useFormStore = create<FormStore>()(

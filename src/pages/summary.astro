@@ -1,8 +1,6 @@
 ---
 import StepLayout from '../layouts/StepLayout.astro';
 import { SummaryReviewCard } from '@/components/organisms/SummaryReviewCard';
-import { ValidatedInput } from '@/components/atoms/ValidatedInput';
-import { ValidatedTextarea } from '@/components/atoms/ValidatedTextarea';
 import { DisclaimerCheckbox } from '@/components/atoms/DisclaimerCheckbox';
 import { SummarySubmitButton } from '@/components/atoms/SummarySubmitButton';
 ---
@@ -19,20 +17,6 @@ import { SummarySubmitButton } from '@/components/atoms/SummarySubmitButton';
       
       <div class="bg-white/60 rounded-xl shadow-sm border border-slate-100 p-6 space-y-6">
         <h2 class="text-xl font-semibold text-slate-900">Final Step</h2>
-        <div class="space-y-4">
-          <ValidatedInput
-            field="email_recipients"
-            label="Email this plan to your support circle (optional)"
-            placeholder="e.g., sibling@email.com, partner@email.com"
-            client:load
-          />
-          <ValidatedTextarea
-            field="custom_message"
-            label="Add a personal message (optional)"
-            placeholder="Let your support circle know what this plan means..."
-            client:load
-          />
-        </div>
         <DisclaimerCheckbox client:load />
         <SummarySubmitButton client:load />
       </div>

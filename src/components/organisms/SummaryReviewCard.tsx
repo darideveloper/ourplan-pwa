@@ -73,7 +73,7 @@ export function SummaryReviewCard() {
           {state.support_circle && state.support_circle.length > 0 ? (
             <ul className="space-y-3">
               {state.support_circle.map((person, i) => (
-                <li key={person.helper_name + i} className="flex flex-col bg-muted/30 p-3 rounded-lg border border-border">
+                <li key={person._id ?? i} className="flex flex-col bg-muted/30 p-3 rounded-lg border border-border">
                   <span className="font-medium text-foreground">{person.helper_name} <span className="text-muted-foreground font-normal text-sm">({person.helper_relationship})</span></span>
                   <div className="grid grid-cols-3 gap-2 mt-2 text-sm">
                     <div>

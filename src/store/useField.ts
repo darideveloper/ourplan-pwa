@@ -14,7 +14,7 @@ function getDefaultForField(field: string): unknown {
 }
 
 export function useField<K extends keyof FormValues>(field: K): {
-  value: FormValues[K]
+  value: FormValues[K] | undefined
   error: string | undefined
   setValue: (v: FormValues[K]) => void
   mounted: boolean

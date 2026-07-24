@@ -40,7 +40,7 @@ export const thirdStepSchema = z.object({
     required_error: "Please indicate if an OurLens scan was completed",
     invalid_type_error: "Please select a valid option",
   }),
-  hazard_flags: z.array(z.string()).min(1, "Please select at least one option"),
+  hazard_flags: z.array(z.string()),
   digital_literacy: z.enum(["pro", "casual", "skeptic", "resistant"], {
     required_error: "Please select a digital literacy level",
     invalid_type_error: "Please select a valid option",
@@ -390,7 +390,7 @@ export const useFormStore = create<FormStore>()(
     {
       name: 'ourplan-form-storage',
       partialize: (state) => {
-        const { isNavigating, ...rest } = state;
+        const { isNavigating, errors: _errors, ...rest } = state;
         return rest;
       },
     }

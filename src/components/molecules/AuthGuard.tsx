@@ -14,6 +14,12 @@ export function AuthGuard({ children }: AuthGuardProps) {
     setHydrated(true)
   }, [])
 
+  React.useEffect(() => {
+    if (hydrated && isValid !== true) {
+      window.location.replace("/")
+    }
+  }, [hydrated, isValid])
+
   if (!hydrated) {
     return (
       <>
@@ -24,7 +30,6 @@ export function AuthGuard({ children }: AuthGuardProps) {
   }
 
   if (isValid !== true) {
-    window.location.replace("/")
     return (
       <LoadingOverlay isVisible={true} message="Redirecting..." />
     )

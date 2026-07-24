@@ -20,18 +20,12 @@ interface ValidatedRadioGroupProps {
 
 export function ValidatedRadioGroup({ field, label, options }: ValidatedRadioGroupProps) {
   const { value, error, setValue, mounted } = useField(field)
-  const parentNameField = useField("parent_name")
 
   const handleValueChange = (v: string) => {
     setValue(v)
   }
 
   const currentValue = mounted ? (value as string) : undefined
-
-  const displayLabel = React.useMemo(() => {
-    const nameToUse = mounted && parentNameField.value ? parentNameField.value : "your loved one"
-    return label.replace(/\[Name\]|\[Parent Name\]/gi, nameToUse)
-  }, [label, mounted, parentNameField.value])
 
   const optionIds = React.useMemo(
     () => options.map((o) => `${field}-${o.value}`),
@@ -41,7 +35,7 @@ export function ValidatedRadioGroup({ field, label, options }: ValidatedRadioGro
   return (
     <div className="flex flex-col gap-2 p-2 w-full">
       <Label className={cn(error ? "text-red-500" : "")}>
-        {displayLabel}
+        {label}
       </Label>
       <RadioGroup
         value={currentValue ?? ""}

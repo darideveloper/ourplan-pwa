@@ -254,6 +254,101 @@ export const fieldSchemaMap: Map<string, z.ZodTypeAny> = (() => {
   return map
 })()
 
+// --- Value Labels for AI Enrichment ---
+
+const enumLabels: Record<string, Record<string, string>> = {
+  parent_health: {
+    independent: "Independent — fully self-sufficient",
+    slowing_down: "Slowing Down — needs occasional help with daily tasks",
+    frail: "Frail — requires regular assistance with daily living",
+    crisis: "Crisis — urgent medical or care intervention needed",
+  },
+  lpa_status: {
+    both: "Both LPAs completed — Property & Financial Affairs and Health & Welfare",
+    one: "One LPA completed",
+    started: "LPA started but not yet completed",
+    none: "None — no Power of Attorney has been set up",
+  },
+  psr_status: {
+    yes: "Yes — registered on the Priority Services Register",
+    no: "No — not registered on the Priority Services Register",
+  },
+  documents_loc: {
+    yes: "Yes — all vital documents located and organised",
+    partial: "Partial — some documents found, some still missing",
+    no: "No — vital documents not yet located",
+  },
+  home_type: {
+    single_level: "Single-level home — bungalow or flat",
+    multi_unadapted: "Multi-storey, unadapted — stairs without modifications",
+    multi_adapted: "Multi-storey, adapted — stairs with modifications (e.g., stairlift)",
+  },
+  ourlens_completed: {
+    yes: "Yes — an OurLens home safety scan was completed",
+    no_but_wants: "No, but wants one — interested in an OurLens home scan",
+    no_dont_know: "No — does not want or is unsure about an OurLens scan",
+  },
+  digital_literacy: {
+    pro: "Proficient — confident with technology and digital tools",
+    casual: "Casual — comfortable with basics but not advanced features",
+    skeptic: "Sceptic — reluctant to adopt new technology, prefers familiar routines",
+    resistant: "Resistant — avoids technology entirely, prefers traditional methods",
+  },
+  has_pets: {
+    yes: "Yes — there are pets in the home",
+    no: "No — no pets in the home",
+  },
+  helper_relationship: {
+    sibling: "Sibling (brother or sister)",
+    partner: "Partner or spouse",
+    grandchild: "Grandchild",
+    extended_family: "Extended family member (cousin, aunt, uncle)",
+    friend_neighbor: "Friend or neighbour",
+  },
+  helper_proximity: {
+    near: "Lives nearby — within the same town or city",
+    mid_distance: "Mid-distance — within an hour or two of travel",
+    abroad: "Lives abroad — different country or time zone",
+  },
+  helper_time: {
+    high: "High availability — can dedicate significant time to help",
+    moderate: "Moderate availability — can help regularly but has own commitments",
+    very_limited: "Very limited — can only help in emergencies or specific pre-arranged slots",
+  },
+  helper_superpower: {
+    admin: "Administration — good with paperwork, forms, organising",
+    fixer: "Fixer — practical, handy, good at solving physical problems",
+    coordinator: "Coordinator — excellent at logistics and managing people",
+    companion: "Companion — provides emotional support, company, and morale",
+  },
+}
+
+const topLevelEnumFields: Array<keyof typeof enumLabels> = [
+  "parent_health", "lpa_status", "psr_status", "documents_loc",
+  "home_type", "ourlens_completed", "digital_literacy", "has_pets",
+]
+
+export function buildValueLabels(values: Record<string, unknown>): Record<string, unknown> {
+  const labels: Record<string, unknown> = {}
+
+  for (const field of topLevelEnumFields) {
+    const value = values[field]
+    const fieldLabels = enumLabels[field]
+    if (value && fieldLabels && typeof value === "string") {
+      labels[field] = fieldLabels[value]
+    }
+  }
+
+  labels.support_circle = {
+    helper_relationship: { ...enumLabels.helper_relationship },
+    helper_proximity: { ...enumLabels.helper_proximity },
+    helper_time: { ...enumLabels.helper_time },
+    helper_superpower: { ...enumLabels.helper_superpower },
+  }
+
+  return labels
+}
+
 // --- Zustand Store ---
 interface FormStore extends FormState {
   errors: Record<string, string>;
